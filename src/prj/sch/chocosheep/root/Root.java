@@ -1,6 +1,8 @@
 package prj.sch.chocosheep.root;
 
 import prj.sch.chocosheep.Colors;
+import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.rootobject.HUD;
 import prj.sch.chocosheep.rootobject.RootObject;
 import prj.sch.chocosheep.state.Intro;
 import prj.sch.chocosheep.state.State;
@@ -12,6 +14,7 @@ public class Root implements Runnable {
     private Display display;
 
     private State state;
+    private HUD hud;
 
     private Thread thread;
     private boolean running;
@@ -23,7 +26,8 @@ public class Root implements Runnable {
     private void init() {
         display = new Display(1920, 1080, "Chocosheep", 60);
 
-        state = new Intro(display);
+        state = new Intro(this, display);
+        hud = new HUD(this, new TextFormat("./res/font/BMJUA_ttf.ttf", 12, Colors.GRAY));
 
         thread = new Thread(this);
         running = false;
@@ -31,10 +35,13 @@ public class Root implements Runnable {
 
     private void tick() {
         state.tick();
+
         for (RootObject object : RootObject.objects) {
             object.tick();
         }
         RootObject.clearDeleteQueue();
+
+        hud.tick();
     }
 
     private void render() {
@@ -52,6 +59,7 @@ public class Root implements Runnable {
         for (RootObject object : RootObject.objects) {
             object.render(graphics);
         }
+        hud.render(graphics);
 
         bufferStrategy.show();
         graphics.dispose();
@@ -59,9 +67,19 @@ public class Root implements Runnable {
 
     @Override
     public void run() {
+        double timePerLoop = 1000000000 / display.getFps();
+        double delta = 0;
+
+        long previousLoop, loop = System.nanoTime();
+
         while (running) {
-            double a = System.currentTimeMillis();
-            if (System.currentTimeMillis() - a > 0.2) {
+            previousLoop = loop;
+            loop = System.nanoTime();
+
+            delta += (loop - previousLoop) / timePerLoop;
+            if (delta >= 1) {
+                delta--;
+
                 tick();
                 render();
             }
@@ -86,5 +104,13 @@ public class Root implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public State getState() {
+        return state;
     }
 }

@@ -8,12 +8,12 @@ import java.io.IOException;
 
 public class TextFormat {
     private String path;
-    private int size;
+    private float size;
     private Color color;
 
     private Font font;
 
-    public TextFormat(String path, int size, Color color) {
+    public TextFormat(String path, float size, Color color) {
         this.path = path;
         this.size = size;
         this.color = color;
@@ -23,7 +23,7 @@ public class TextFormat {
 
     private void init() {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, new File(path)).deriveFont((float) size);
+            font = Font.createFont(Font.TRUETYPE_FONT, new File(path)).deriveFont(size);
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
         }
@@ -35,6 +35,20 @@ public class TextFormat {
         return (int) font.getStringBounds(string, fontRenderContext).getWidth();
     }
 
+    public int stringHeight(String string) {
+        AffineTransform affineTransform = new AffineTransform();
+        FontRenderContext fontRenderContext = new FontRenderContext(affineTransform, true, true);
+        return (int) font.getStringBounds(string, fontRenderContext).getHeight();
+    }
+
+    public int[] stringBounds(String string) {
+        AffineTransform affineTransform = new AffineTransform();
+        FontRenderContext fontRenderContext = new FontRenderContext(affineTransform, true, true);
+        return new int[] {
+                (int) font.getStringBounds(string, fontRenderContext).getWidth(),
+                (int) font.getStringBounds(string, fontRenderContext).getHeight()};
+    }
+
     public Font getFont() {
         return font;
     }
@@ -43,7 +57,12 @@ public class TextFormat {
         return color;
     }
 
-    public void setSize(int size) {
+    public float getSize() {
+        return size;
+    }
+
+    public void setSize(float size) {
         this.size = size;
+        init();
     }
 }

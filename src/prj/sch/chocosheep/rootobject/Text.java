@@ -7,9 +7,9 @@ import java.awt.*;
 public class Text extends RootObject {
     private int x, y;
     private String text;
-    private TextFormat textFormat;
+    TextFormat textFormat;
 
-    public Text(int x, int y, String text, TextFormat textFormat) {
+    Text(int x, int y, String text, TextFormat textFormat) {
         this.x = x;
         this.y = y;
         this.text = text;
@@ -26,7 +26,19 @@ public class Text extends RootObject {
         graphics2D.drawString(text, x, y);
     }
 
-    public int getWidth() {
-        return textFormat.stringWidth(text);
+    public int[] getBounds() {
+        return textFormat.stringBounds(text);
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    void setText(String text) {
+        this.text = text;
     }
 }
