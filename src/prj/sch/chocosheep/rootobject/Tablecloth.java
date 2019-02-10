@@ -24,12 +24,21 @@ public class Tablecloth extends RootObject {
         height = display.getHeight();
 
         xs = new int[6];
-        xs[0] = (int) (width * 0.05);
-        xs[1] = (int) (width * 0.07);
-        xs[2] = (int) (width * 0.09);
-        xs[3] = (int) (width * 0.91);
-        xs[4] = (int) (width * 0.93);
-        xs[5] = (int) (width * 0.95);
+        if (width > height) {
+            xs[0] = (int) (Math.max(width, height) * 0.05);
+            xs[1] = (int) (Math.max(width, height) * 0.07);
+            xs[2] = (int) (Math.max(width, height) * 0.09);
+            xs[3] = (int) (Math.max(width, height) * 0.91);
+            xs[4] = (int) (Math.max(width, height) * 0.93);
+            xs[5] = (int) (Math.max(width, height) * 0.95);
+        } else {
+            xs[0] = (int) (Math.min(width, height) * 0.05);
+            xs[1] = (int) (Math.min(width, height) * 0.07);
+            xs[2] = (int) (Math.min(width, height) * 0.09);
+            xs[3] = (int) (Math.min(width, height) * 0.91);
+            xs[4] = (int) (Math.min(width, height) * 0.93);
+            xs[5] = (int) (Math.min(width, height) * 0.95);
+        }
 
         xPoly = new int[4];
         xPoly[0] = (int) (-width * 0.05);
@@ -64,5 +73,10 @@ public class Tablecloth extends RootObject {
                 graphics2D.drawLine(x, height / 2, width / 2, y);
             }
         }
+    }
+
+    @Override
+    public void windowResize() {
+        init();
     }
 }

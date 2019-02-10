@@ -1,18 +1,23 @@
 package prj.sch.chocosheep.root;
 
 import prj.sch.chocosheep.Colors;
+import prj.sch.chocosheep.input.KeyboardManager;
+import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.rootobject.Card;
 import prj.sch.chocosheep.rootobject.HUD;
 import prj.sch.chocosheep.rootobject.RootObject;
-import prj.sch.chocosheep.state.Intro;
+import prj.sch.chocosheep.rootobject.Tablecloth;
+import prj.sch.chocosheep.state.Lobby;
 import prj.sch.chocosheep.state.State;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class Root implements Runnable {
+    private MouseManager mouseManager;
+    private KeyboardManager keyboardManager;
     private Display display;
-
     private State state;
     private HUD hud;
 
@@ -24,10 +29,12 @@ public class Root implements Runnable {
     }
 
     private void init() {
-        display = new Display(1920, 1080, "Chocosheep", 60);
+        mouseManager = new MouseManager();
+        keyboardManager = new KeyboardManager();
+        display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyboardManager);
 
-        state = new Intro(this, display);
-        hud = new HUD(this, new TextFormat("./res/font/BMJUA_ttf.ttf", 12, Colors.GRAY));
+        state = new Lobby(this, mouseManager, display);
+        hud = new HUD(this, new TextFormat("./res/font/BMJUA_ttf.ttf", 12, Colors.BLACK));
 
         thread = new Thread(this);
         running = false;
@@ -36,6 +43,8 @@ public class Root implements Runnable {
     private void tick() {
         state.tick();
 
+        Card.previousPreviewing = Card.previewing;
+        mouseManager.tick();
         for (RootObject object : RootObject.objects) {
             object.tick();
         }
@@ -52,7 +61,7 @@ public class Root implements Runnable {
         }
         Graphics graphics = bufferStrategy.getDrawGraphics();
 
-        graphics.setColor(Colors.BACKGROUND);
+        graphics.setColor(Colors.WHITE);
         graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
 
         state.render(graphics);
@@ -71,6 +80,7 @@ public class Root implements Runnable {
         double delta = 0;
 
         long previousLoop, loop = System.nanoTime();
+        long previousFrame, frame = System.currentTimeMillis();
 
         while (running) {
             previousLoop = loop;
@@ -79,6 +89,10 @@ public class Root implements Runnable {
             delta += (loop - previousLoop) / timePerLoop;
             if (delta >= 1) {
                 delta--;
+
+                previousFrame = frame;
+                frame = System.currentTimeMillis();
+                display.setDisplayFps(1000.0 / (frame - previousFrame));
 
                 tick();
                 render();

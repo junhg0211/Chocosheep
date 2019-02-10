@@ -26,6 +26,14 @@ public class Text extends RootObject {
         graphics2D.drawString(text, x, y);
     }
 
+    int getWidth() {
+        return textFormat.stringWidth(text);
+    }
+
+    int getHeight() {
+        return textFormat.stringHeight(text);
+    }
+
     public int[] getBounds() {
         return textFormat.stringBounds(text);
     }
