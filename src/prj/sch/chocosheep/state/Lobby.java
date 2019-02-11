@@ -34,7 +34,7 @@ public class Lobby extends State {
     @Override
     public void tick() {
         if (toGame.isClicked() || keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
-            root.setState(new SinglePlay(root, display, keyManager));
+            root.setState(new SinglePlay(root, display, keyManager, mouseManager));
         }
     }
 

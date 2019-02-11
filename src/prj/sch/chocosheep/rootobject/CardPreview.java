@@ -24,7 +24,7 @@ public class CardPreview extends RootObject {
 
     private void init() {
         h = 50;
-        w = card.getW() + 100;
+        w = card.getWidth() + 100;
         x = card.getX() - 50;
         y = card.getY() - h - 10;
         color = Const.BLACK;

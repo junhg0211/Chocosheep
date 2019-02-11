@@ -1,7 +1,7 @@
 package prj.sch.chocosheep.functions;
 
 public class Positioning {
-    public static int center(int x, int y) {
-        return (x - y) / 2;
+    public static int center(int a, int b) {
+        return (a - b) / 2;
     }
 }

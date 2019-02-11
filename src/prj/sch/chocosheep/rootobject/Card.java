@@ -1,40 +1,81 @@
 package prj.sch.chocosheep.rootobject;
 
 import prj.sch.chocosheep.Const;
+import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.functions.Positioning;
 import prj.sch.chocosheep.input.MouseManager;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Card extends RootObject {
+    public static int WIDTH = 100;
+    private static int HEIGHT = 150;
+    private static int SHADOW_DEPTH = 3;
+    private static int ROUNDNESS = 10;
+    private static float SHADOW_OPACITY = 0.5f;
+
+    private static ArrayList<Card> getSortedDeck(MouseManager mouseManager) {
+        ArrayList<Card> deck = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+            deck.add(new Card(Type.KAO, mouseManager));
+        } for (int i = 0; i < 6; i++) {
+            deck.add(new Card(Type.GARTAR, mouseManager));
+        } for (int i = 0; i < 8; i++) {
+            deck.add(new Card(Type.ROTTAR, mouseManager));
+        } for (int i = 0; i < 10; i++) {
+            deck.add(new Card(Type.ORGAN, mouseManager));
+        } for (int i = 0; i < 12; i++) {
+            deck.add(new Card(Type.SOYAR, mouseManager));
+        } for (int i = 0; i < 14; i++) {
+            deck.add(new Card(Type.BAAW, mouseManager));
+        } for (int i = 0; i < 16; i++) {
+            deck.add(new Card(Type.SORVOR, mouseManager));
+        } for (int i = 0; i < 18; i++) {
+            deck.add(new Card(Type.PHORE, mouseManager));
+        } for (int i = 0; i < 20; i++) {
+            deck.add(new Card(Type.BOVIE, mouseManager));
+        } for (int i = 0; i < 22; i++) {
+            deck.add(new Card(Type.BAINNE, mouseManager));
+        } for (int i = 0; i < 24; i++) {
+            deck.add(new Card(Type.BONAR, mouseManager));
+        }
+
+        return deck;
+    }
+
+    public static ArrayList<Card> getRandomizedDeck(MouseManager mouseManager) {
+        ArrayList<Card> deck = getSortedDeck(mouseManager);
+
+        Collections.shuffle(deck);
+
+        return deck;
+    }
+
     public static Card previewing, previousPreviewing;
 
-    public enum Type { KAO, GARTAR, ROTTAR, ORGAN, SOYAR, BAAW, SORVOR, PHORE, BOVIE, BAINNE, BONAR }
+    public enum Type { KAO, GARTAR, ROTTAR, ORGAN, SOYAR, BAAW, SORVOR, PHORE, BOVIE, BAINNE, BONAR, NULL }
 
     private Type type;
     private MouseManager mouseManager;
 
-    private int x, y, w, h, shadowDepth, roundness;
-    private float shadowOpacity;
+    private int x, y;
     private Color color;
     private CardPreview cardPreview;
 
-    public Card(Type type, MouseManager mouseManager, int x) {
+    private boolean back;
+    private Text backTerroText;
+
+    public Card(Type type, MouseManager mouseManager) {
         this.type = type;
         this.mouseManager = mouseManager;
-        this.x = x;
 
         init();
     }
 
     private void init() {
-//        x = 200;
-        y = 200;
-        w = 100;
-        h = 150;
-        shadowDepth = 3;
-        roundness = 10;
-        shadowOpacity = 0.5f;  // 이거 임시로 추가한 거임!
-
         if (type == Type.KAO) color = Const.YELLOW;
         else if (type == Type.GARTAR) color = Const.LIME;
         else if (type == Type.ROTTAR) color = Const.RED;
@@ -48,6 +89,9 @@ public class Card extends RootObject {
         else if (type == Type.BONAR) color = Const.COFFEE;
 
         cardPreview = new CardPreview(this);
+
+        back = false;
+        backTerroText = new Text(0, 0, "T", new TextFormat(Const.FONT_PATH, WIDTH / 2f, Const.WHITE));
     }
 
     @Override
@@ -59,7 +103,7 @@ public class Card extends RootObject {
 
     private boolean isUnderCursor() {
         int x = mouseManager.getX(), y = mouseManager.getY();
-        return this.x < x && x < this.x + w && this.y < y && y < this.y + h;
+        return this.x < x && x < this.x + WIDTH && this.y < y && y < this.y + HEIGHT;
     }
 
     private boolean isPreviewing() {
@@ -71,15 +115,21 @@ public class Card extends RootObject {
         Graphics2D graphics2D = (Graphics2D) graphics;
 
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        drawShadow(graphics2D, x, y, w, h, shadowDepth, roundness, shadowOpacity);
+        drawShadow(graphics2D, x, y, WIDTH, HEIGHT, SHADOW_DEPTH, ROUNDNESS, SHADOW_OPACITY);
         graphics2D.setColor(Const.WHITE);
-        graphics2D.fillRoundRect(x, y, w, h, roundness, roundness);
+        graphics2D.fillRoundRect(x, y, WIDTH, HEIGHT, ROUNDNESS, ROUNDNESS);
 
-        graphics2D.setColor(color);
-        graphics2D.fillRoundRect(x + 10, y + 10, w - 20, h - 20, roundness, roundness);
+        if (back) {
+            graphics2D.setColor(Const.BLACK);
+            graphics2D.fillOval(x + Positioning.center(WIDTH, WIDTH - 20), y + Positioning.center(HEIGHT, WIDTH - 20), WIDTH - 20, WIDTH - 20);
+            backTerroText.render(graphics);
+        } else {
+            graphics2D.setColor(color);
+            graphics2D.fillRoundRect(x + 10, y + 10, WIDTH - 20, HEIGHT - 20, ROUNDNESS, ROUNDNESS);
 
-        if (isPreviewing()) {
-            cardPreview.render(graphics);
+            if (isPreviewing()) {
+                cardPreview.render(graphics);
+            }
         }
     }
 
@@ -91,19 +141,39 @@ public class Card extends RootObject {
         }
     }
 
-    int getX() {
+    public void setX(int x) {
+        this.x = x;
+        cardPreview = new CardPreview(this);
+        backTerroText.setX(x + Positioning.center(WIDTH, backTerroText.getWidth()));
+    }
+
+    public void setY(int y) {
+        this.y = y;
+        cardPreview = new CardPreview(this);
+        backTerroText.setY(y + Positioning.center(HEIGHT, backTerroText.getHeight()) + backTerroText.getHeight() - 10);
+    }
+
+    public int getX() {
         return x;
     }
 
-    int getY() {
+    public int getY() {
         return y;
     }
 
-    int getW() {
-        return w;
+    public int getWidth() {
+        return WIDTH;
     }
 
-    Type getType() {
+    public Type getType() {
         return type;
+    }
+
+    public void setBack(boolean back) {
+        this.back = back;
+    }
+
+    public int getHEIGHT() {
+        return HEIGHT;
     }
 }

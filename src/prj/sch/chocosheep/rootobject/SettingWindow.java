@@ -30,7 +30,7 @@ public class SettingWindow extends RootObject {
     private void init() {
         rounds = 1;
         sortedOrder = true;
-        tradeLimit = 0;
+        tradeLimit = 4;
 
         indexNameTextFormat = new TextFormat(Const.FONT_PATH, 36, Const.WHITE);
         valueTextFormat = new TextFormat(Const.FONT_PATH, 144, Const.WHITE);
@@ -120,7 +120,7 @@ public class SettingWindow extends RootObject {
             tradeLimitText.setText("20");
         } else if (startKeys[KeyEvent.VK_CLOSE_BRACKET]) {
             tradeLimit = Integer.MAX_VALUE;
-            tradeLimitText.setText("무제한");
+            tradeLimitText.setText("없음");
         }
     }
 
@@ -142,5 +142,9 @@ public class SettingWindow extends RootObject {
 
     public boolean isSortedOrder() {
         return sortedOrder;
+    }
+
+    public int getTradeLimit() {
+        return tradeLimit;
     }
 }

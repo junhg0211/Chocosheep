@@ -20,14 +20,14 @@ public class TextTimeSize extends Text {
 
     private void init() {
         startTime = System.currentTimeMillis();
-        startSize = super.textFormat.getSize();
+        startSize = super.getTextFormat().getSize();
     }
 
     @Override
     public void tick() {
         double progress = Movements.easeOut((double) (System.currentTimeMillis() - startTime) / duration);
 
-        super.textFormat.setSize((float) ((targetSize - startSize) * progress + startSize));
+        super.getTextFormat().setSize((float) ((targetSize - startSize) * progress + startSize));
     }
 
     public boolean isEnd() {

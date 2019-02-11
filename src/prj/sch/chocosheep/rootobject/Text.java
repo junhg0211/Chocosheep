@@ -7,7 +7,7 @@ import java.awt.*;
 public class Text extends RootObject {
     private int x, y;
     private String text;
-    TextFormat textFormat;
+    private TextFormat textFormat;
 
     Text(int x, int y, String text, TextFormat textFormat) {
         this.x = x;
@@ -49,5 +49,9 @@ public class Text extends RootObject {
 
     void setText(String text) {
         this.text = text;
+    }
+
+    public TextFormat getTextFormat() {
+        return textFormat;
     }
 }
