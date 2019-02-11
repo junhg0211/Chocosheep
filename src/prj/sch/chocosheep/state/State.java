@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class State {
     private ArrayList<RootObject> objects = new ArrayList<>();
 
-    private Root root;
+    Root root;
 
     State(Root root) {
         this.root = root;

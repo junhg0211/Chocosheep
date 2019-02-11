@@ -45,6 +45,7 @@ public class Root implements Runnable {
 
         Card.previousPreviewing = Card.previewing;
         mouseManager.tick();
+        keyboardManager.tick();
         for (RootObject object : RootObject.objects) {
             object.tick();
         }

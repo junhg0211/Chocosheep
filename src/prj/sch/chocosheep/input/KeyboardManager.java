@@ -4,14 +4,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyboardManager implements KeyListener {
-    private boolean[] keys;
+    private int keyCount = 256;
+    private boolean[] keys, previousKeys, startKeys, endKeys;
 
     public KeyboardManager() {
         init();
     }
 
     private void init() {
-        keys = new boolean[256];
+        keys = new boolean[keyCount];
+        previousKeys = new boolean[keyCount];
+        startKeys = new boolean[keyCount];
+        endKeys = new boolean[keyCount];
+    }
+
+    public void tick() {
+        for (int i = 0; i < keyCount; i++) {
+            startKeys[i] = !previousKeys[i] && keys[i];
+            endKeys[i] = previousKeys[i] && !keys[i];
+        }
+
+        previousKeys = keys.clone();
     }
 
     @Override

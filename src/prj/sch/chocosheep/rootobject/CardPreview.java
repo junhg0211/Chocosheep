@@ -75,7 +75,7 @@ public class CardPreview extends RootObject {
         count.setY(card.getY() + 7 + Positioning.center(h, count.getHeight()) - count.getHeight());
         prise = new Text[4];
 
-        int textAreaWidth = (w - 21 - count.getWidth()) / 5;
+        int textAreaWidth = (int) ((w - 21 - count.getWidth()) / 4.5);
         int priseY = y + h - 21;
         for (int i = 0; i < 4; i++) {
             prise[i] = new Text(0, priseY, priseText[i], priseTextFormat);

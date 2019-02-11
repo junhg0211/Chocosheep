@@ -4,15 +4,15 @@ import prj.sch.chocosheep.Colors;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
 import prj.sch.chocosheep.root.Root;
-import prj.sch.chocosheep.rootobject.Card;
-import prj.sch.chocosheep.rootobject.RootObject;
-import prj.sch.chocosheep.rootobject.Tablecloth;
+import prj.sch.chocosheep.rootobject.Clickarea;
 
 import java.awt.*;
 
 public class Lobby extends State {
     private MouseManager mouseManager;
     private Display display;
+
+    private Clickarea toGame;
 
     public Lobby(Root root, MouseManager mouseManager, Display display) {
         super(root);
@@ -23,18 +23,14 @@ public class Lobby extends State {
     }
 
     private void init() {
-        RootObject.add(new Tablecloth(display));
-        RootObject.add(new Card(Card.Type.KAO, mouseManager, 100));
-        RootObject.add(new Card(Card.Type.GARTAR, mouseManager, 150));
-        RootObject.add(new Card(Card.Type.ROTTAR, mouseManager, 200));
-        RootObject.add(new Card(Card.Type.ORGAN, mouseManager, 250));
-        RootObject.add(new Card(Card.Type.SOYAR, mouseManager, 300));
-        RootObject.add(new Card(Card.Type.BAAW, mouseManager, 350));
-        RootObject.add(new Card(Card.Type.SORVOR, mouseManager, 400));
-        RootObject.add(new Card(Card.Type.PHORE, mouseManager, 450));
-        RootObject.add(new Card(Card.Type.BOVIE, mouseManager, 500));
-        RootObject.add(new Card(Card.Type.BAINNE, mouseManager, 550));
-        RootObject.add(new Card(Card.Type.BONAR, mouseManager, 600));
+        toGame = new Clickarea(0, 0, display.getWidth() / 2, display.getHeight(), mouseManager);
+    }
+
+    @Override
+    public void tick() {
+        if (toGame.isClicked()) {
+            super.root.setState(new SinglePlay(super.root, display));
+        }
     }
 
     @Override
@@ -43,6 +39,5 @@ public class Lobby extends State {
 
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2D.setColor(Colors.BLACK);
-        graphics2D.drawLine(0, 0, display.getWidth(), display.getHeight());
     }
 }
