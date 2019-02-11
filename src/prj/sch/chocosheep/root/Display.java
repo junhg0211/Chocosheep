@@ -1,6 +1,6 @@
 package prj.sch.chocosheep.root;
 
-import prj.sch.chocosheep.input.KeyboardManager;
+import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.rootobject.RootObject;
 
@@ -15,17 +15,17 @@ public class Display {
     private String title;
     private double fps, displayFps;
     private MouseManager mouseManager;
-    private KeyboardManager keyboardManager;
+    private KeyManager keyManager;
 
     private Canvas canvas;
 
-    Display(int width, int height, String title, double fps, MouseManager mouseManager, KeyboardManager keyboardManager) {
+    Display(int width, int height, String title, double fps, MouseManager mouseManager, KeyManager keyManager) {
         this.width = width;
         this.height = height;
         this.title = title;
         this.fps = fps;
         this.mouseManager = mouseManager;
-        this.keyboardManager = keyboardManager;
+        this.keyManager = keyManager;
 
         init();
     }
@@ -50,7 +50,7 @@ public class Display {
         });
         frame.addMouseListener(mouseManager);
         frame.addMouseMotionListener(mouseManager);
-        frame.addKeyListener(keyboardManager);
+        frame.addKeyListener(keyManager);
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(width, height));
@@ -58,6 +58,7 @@ public class Display {
         canvas.setMaximumSize(new Dimension(width, height));
         canvas.addMouseListener(mouseManager);
         canvas.addMouseMotionListener(mouseManager);
+        canvas.setFocusable(false);
 
         frame.add(canvas);
         frame.setVisible(true);

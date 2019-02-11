@@ -1,13 +1,12 @@
 package prj.sch.chocosheep.root;
 
-import prj.sch.chocosheep.Colors;
-import prj.sch.chocosheep.input.KeyboardManager;
+import prj.sch.chocosheep.Const;
+import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.TextFormat;
 import prj.sch.chocosheep.rootobject.Card;
 import prj.sch.chocosheep.rootobject.HUD;
 import prj.sch.chocosheep.rootobject.RootObject;
-import prj.sch.chocosheep.rootobject.Tablecloth;
 import prj.sch.chocosheep.state.Lobby;
 import prj.sch.chocosheep.state.State;
 
@@ -16,7 +15,7 @@ import java.awt.image.BufferStrategy;
 
 public class Root implements Runnable {
     private MouseManager mouseManager;
-    private KeyboardManager keyboardManager;
+    private KeyManager keyManager;
     private Display display;
     private State state;
     private HUD hud;
@@ -30,22 +29,24 @@ public class Root implements Runnable {
 
     private void init() {
         mouseManager = new MouseManager();
-        keyboardManager = new KeyboardManager();
-        display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyboardManager);
+        keyManager = new KeyManager();
+        display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyManager);
 
-        state = new Lobby(this, mouseManager, display);
-        hud = new HUD(this, new TextFormat("./res/font/BMJUA_ttf.ttf", 12, Colors.BLACK));
+        state = new Lobby(this, mouseManager, keyManager, display);
+        hud = new HUD(this, new TextFormat(Const.FONT_PATH, 12, Const.BLACK));
 
         thread = new Thread(this);
         running = false;
     }
 
     private void tick() {
+        Card.previousPreviewing = Card.previewing;
+
+        mouseManager.tick();
+        keyManager.tick();
+
         state.tick();
 
-        Card.previousPreviewing = Card.previewing;
-        mouseManager.tick();
-        keyboardManager.tick();
         for (RootObject object : RootObject.objects) {
             object.tick();
         }
@@ -62,7 +63,7 @@ public class Root implements Runnable {
         }
         Graphics graphics = bufferStrategy.getDrawGraphics();
 
-        graphics.setColor(Colors.WHITE);
+        graphics.setColor(Const.WHITE);
         graphics.fillRect(0, 0, display.getWidth(), display.getHeight());
 
         state.render(graphics);
@@ -75,7 +76,7 @@ public class Root implements Runnable {
         graphics.dispose();
     }
 
-    @Override
+//    @Override
     public void run() {
         double timePerLoop = 1000000000 / display.getFps();
         double delta = 0;
@@ -90,7 +91,6 @@ public class Root implements Runnable {
             delta += (loop - previousLoop) / timePerLoop;
             if (delta >= 1) {
                 delta--;
-
                 previousFrame = frame;
                 frame = System.currentTimeMillis();
                 display.setDisplayFps(1000.0 / (frame - previousFrame));
@@ -127,5 +127,9 @@ public class Root implements Runnable {
 
     public State getState() {
         return state;
+    }
+
+    public KeyManager getKeyManager() {
+        return keyManager;
     }
 }

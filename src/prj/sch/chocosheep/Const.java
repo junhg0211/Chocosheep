@@ -2,7 +2,7 @@ package prj.sch.chocosheep;
 
 import java.awt.*;
 
-public class Colors {
+public class Const {
     public static Color BLACK = new Color(0x1F2226);
     public static Color WHITE = new Color(0xFFF4E0);
 
@@ -16,4 +16,6 @@ public class Colors {
     public static Color BLUE = new Color(0x2E5AB5);
     public static Color AQUA = new Color(0x2E94B5);
     public static Color COFFEE = new Color(0x591500);
+
+    public static String FONT_PATH = "./res/font/BMJUA_ttf.ttf";
 }

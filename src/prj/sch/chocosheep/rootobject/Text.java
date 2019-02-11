@@ -34,8 +34,9 @@ public class Text extends RootObject {
         return textFormat.stringHeight(text);
     }
 
-    public int[] getBounds() {
-        return textFormat.stringBounds(text);
+    Text addHeight() {
+        y += getHeight();
+        return this;
     }
 
     public void setX(int x) {

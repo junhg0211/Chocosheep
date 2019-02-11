@@ -1,6 +1,6 @@
 package prj.sch.chocosheep.rootobject;
 
-import prj.sch.chocosheep.Colors;
+import prj.sch.chocosheep.Const;
 import prj.sch.chocosheep.input.MouseManager;
 
 import java.awt.*;
@@ -35,17 +35,17 @@ public class Card extends RootObject {
         roundness = 10;
         shadowOpacity = 0.5f;  // 이거 임시로 추가한 거임!
 
-        if (type == Type.KAO) color = Colors.YELLOW;
-        else if (type == Type.GARTAR) color = Colors.LIME;
-        else if (type == Type.ROTTAR) color = Colors.RED;
-        else if (type == Type.ORGAN) color = Colors.BLACK;
-        else if (type == Type.SOYAR) color = Colors.SOY;
-        else if (type == Type.BAAW) color = Colors.GREEN;
-        else if (type == Type.SORVOR) color = Colors.PURPLE;
-        else if (type == Type.PHORE) color = Colors.CYAN;
-        else if (type == Type.BOVIE) color = Colors.BLUE;
-        else if (type == Type.BAINNE) color = Colors.AQUA;
-        else if (type == Type.BONAR) color = Colors.COFFEE;
+        if (type == Type.KAO) color = Const.YELLOW;
+        else if (type == Type.GARTAR) color = Const.LIME;
+        else if (type == Type.ROTTAR) color = Const.RED;
+        else if (type == Type.ORGAN) color = Const.BLACK;
+        else if (type == Type.SOYAR) color = Const.SOY;
+        else if (type == Type.BAAW) color = Const.GREEN;
+        else if (type == Type.SORVOR) color = Const.PURPLE;
+        else if (type == Type.PHORE) color = Const.CYAN;
+        else if (type == Type.BOVIE) color = Const.BLUE;
+        else if (type == Type.BAINNE) color = Const.AQUA;
+        else if (type == Type.BONAR) color = Const.COFFEE;
 
         cardPreview = new CardPreview(this);
     }
@@ -72,7 +72,7 @@ public class Card extends RootObject {
 
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         drawShadow(graphics2D, x, y, w, h, shadowDepth, roundness, shadowOpacity);
-        graphics2D.setColor(Colors.WHITE);
+        graphics2D.setColor(Const.WHITE);
         graphics2D.fillRoundRect(x, y, w, h, roundness, roundness);
 
         graphics2D.setColor(color);

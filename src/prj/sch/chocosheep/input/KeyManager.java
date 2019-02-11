@@ -2,12 +2,15 @@ package prj.sch.chocosheep.input;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Arrays;
 
-public class KeyboardManager implements KeyListener {
+public class KeyManager implements KeyListener {
     private int keyCount = 256;
-    private boolean[] keys, previousKeys, startKeys, endKeys;
+    private boolean[] keys;
+    private boolean[] previousKeys;
+    private boolean[] startKeys;
 
-    public KeyboardManager() {
+    public KeyManager() {
         init();
     }
 
@@ -15,22 +18,18 @@ public class KeyboardManager implements KeyListener {
         keys = new boolean[keyCount];
         previousKeys = new boolean[keyCount];
         startKeys = new boolean[keyCount];
-        endKeys = new boolean[keyCount];
     }
 
     public void tick() {
         for (int i = 0; i < keyCount; i++) {
             startKeys[i] = !previousKeys[i] && keys[i];
-            endKeys[i] = previousKeys[i] && !keys[i];
         }
 
         previousKeys = keys.clone();
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
+    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -46,8 +45,8 @@ public class KeyboardManager implements KeyListener {
         } catch (ArrayIndexOutOfBoundsException ignored) {}
     }
 
-    public boolean[] getKeys() {
-        return keys;
+    public boolean[] getStartKeys() {
+        return startKeys;
     }
 }
 

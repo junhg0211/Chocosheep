@@ -1,6 +1,6 @@
 package prj.sch.chocosheep.rootobject;
 
-import prj.sch.chocosheep.Colors;
+import prj.sch.chocosheep.Const;
 import prj.sch.chocosheep.TextFormat;
 import prj.sch.chocosheep.functions.Positioning;
 
@@ -27,11 +27,11 @@ public class CardPreview extends RootObject {
         w = card.getW() + 100;
         x = card.getX() - 50;
         y = card.getY() - h - 10;
-        color = Colors.BLACK;
+        color = Const.BLACK;
         opacity = 0.8f;
 
-        TextFormat countTextFormat = new TextFormat("./res/font/BMJUA_ttf.ttf", 36, Colors.WHITE);
-        TextFormat priseTextFormat = new TextFormat("./res/font/BMJUA_ttf.ttf", 15, Colors.WHITE);
+        TextFormat countTextFormat = new TextFormat(Const.FONT_PATH, 36, Const.WHITE);
+        TextFormat priseTextFormat = new TextFormat(Const.FONT_PATH, 15, Const.WHITE);
 
         String countText;
         String[] priseText;
