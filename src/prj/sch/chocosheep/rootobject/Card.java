@@ -2,20 +2,21 @@ package prj.sch.chocosheep.rootobject;
 
 import prj.sch.chocosheep.Const;
 import prj.sch.chocosheep.TextFormat;
-import prj.sch.chocosheep.functions.Positioning;
+import prj.sch.chocosheep.game.Set;
 import prj.sch.chocosheep.input.MouseManager;
 
 import java.awt.*;
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class Card extends RootObject {
     public static int WIDTH = 100;
     public static int HEIGHT = 150;
-    public static int SHADOW_DEPTH = 3;
+    static int SHADOW_DEPTH = 3;
     public static int ROUNDNESS = 10;
-    public static int BORDER_WIDTH = 10;
-    public static float SHADOW_OPACITY = 0.5f;
+    static int BORDER_WIDTH = 10;
+    static float SHADOW_OPACITY = 0.5f;
 
     private static ArrayList<Card> getSortedDeck(MouseManager mouseManager) {
         ArrayList<Card> deck = new ArrayList<>();
@@ -66,7 +67,8 @@ public class Card extends RootObject {
     private Color color;
     private CardPreview cardPreview;
 
-    private Text text;
+    private Text count;
+    private Text prise1, prise2, prise3, prise4;
 
     public Card(Type type, MouseManager mouseManager) {
         this.type = type;
@@ -78,66 +80,97 @@ public class Card extends RootObject {
     private void init() {
         TextFormat cardWhiteTextFormat = new TextFormat(Const.FONT_PATH, 24, Const.WHITE);
         TextFormat cardBlackTextFormat = new TextFormat(Const.FONT_PATH, 24, Const.BLACK);
+        int[] list;
         if (type == Type.KAO) {
             color = Const.YELLOW;
-            text = new Text(0, 0, "4", cardBlackTextFormat);
+            count = new Text(0, 0, "4", cardBlackTextFormat);
+            list = Set.KAO;
         }
         else if (type == Type.GARTAR) {
             color = Const.LIME;
-            text = new Text(0, 0, "6", cardBlackTextFormat);
+            count = new Text(0, 0, "6", cardBlackTextFormat);
+            list = Set.GARTAR;
         }
         else if (type == Type.ROTTAR) {
             color = Const.RED;
-            text = new Text(0, 0, "8", cardWhiteTextFormat);
+            count = new Text(0, 0, "8", cardWhiteTextFormat);
+            list = Set.ROTTAR;
         }
         else if (type == Type.ORGAN) {
             color = Const.BLACK;
-            text = new Text(0, 0, "10", cardWhiteTextFormat);
+            count = new Text(0, 0, "10", cardWhiteTextFormat);
+            list = Set.ORGAN;
         }
         else if (type == Type.SOYAR) {
             color = Const.SOY;
-            text = new Text(0, 0, "12", cardBlackTextFormat);
+            count = new Text(0, 0, "12", cardBlackTextFormat);
+            list = Set.SOYAR;
         }
         else if (type == Type.BAAW) {
             color = Const.GREEN;
-            text = new Text(0, 0, "14", cardWhiteTextFormat);
+            count = new Text(0, 0, "14", cardWhiteTextFormat);
+            list = Set.BAAW;
         }
         else if (type == Type.SORVOR) {
             color = Const.PURPLE;
-            text = new Text(0, 0, "16", cardWhiteTextFormat);
+            count = new Text(0, 0, "16", cardWhiteTextFormat);
+            list = Set.SORVOR;
         }
         else if (type == Type.PHORE) {
             color = Const.CYAN;
-            text = new Text(0, 0, "18", cardWhiteTextFormat);
+            count = new Text(0, 0, "18", cardWhiteTextFormat);
+            list = Set.PHORE;
         }
         else if (type == Type.BOVIE) {
             color = Const.BLUE;
-            text = new Text(0, 0, "20", cardWhiteTextFormat);
+            count = new Text(0, 0, "20", cardWhiteTextFormat);
+            list = Set.BOVIE;
         }
         else if (type == Type.BAINNE) {
             color = Const.AQUA;
-            text = new Text(0, 0, "22", cardWhiteTextFormat);
+            count = new Text(0, 0, "22", cardWhiteTextFormat);
+            list = Set.BAINNE;
         }
         else if (type == Type.BONAR) {
             color = Const.COFFEE;
-            text = new Text(0, 0, "24", cardWhiteTextFormat);
+            count = new Text(0, 0, "24", cardWhiteTextFormat);
+            list = Set.BONAR;
+        } else {
+            return;
         }
+
+        TextFormat priseTextFormat = new TextFormat(Const.FONT_PATH, 16, count.getTextFormat().getColor());
+        prise1 = new Text(0, 0, "" + list[0], priseTextFormat);
+        prise2 = new Text(0, 0, "" + list[1], priseTextFormat);
+        prise3 = new Text(0, 0, "" + list[2], priseTextFormat);
+        prise4 = new Text(0, 0, "" + list[3], priseTextFormat);
+
         adjustTextPosition();
 
         cardPreview = new CardPreview(this);
     }
 
-    private void adjustTextXPosition() {
-        text.setX(x + WIDTH - text.getWidth() - BORDER_WIDTH - BORDER_WIDTH);
+    private void adjustCountXPosition() {
+        count.setX(x + WIDTH - count.getWidth() - BORDER_WIDTH - BORDER_WIDTH);
+
+        prise1.setX(x + BORDER_WIDTH * 2);
+        prise2.setX(x + BORDER_WIDTH * 2);
+        prise3.setX(x + BORDER_WIDTH * 2);
+        prise4.setX(x + BORDER_WIDTH * 2);
     }
 
-    private void adjustTextYPosition() {
-        text.setY(y + BORDER_WIDTH * 2 + text.getHeight());
+    private void adjustCountYPosition() {
+        count.setY(y + BORDER_WIDTH * 2 + count.getHeight());
+
+        prise1.setY(y + (HEIGHT - BORDER_WIDTH * 2) / 4);
+        prise2.setY(y + (HEIGHT - BORDER_WIDTH * 2) / 4 * 2);
+        prise3.setY(y + (HEIGHT - BORDER_WIDTH * 2) / 4 * 3);
+        prise4.setY(y + (HEIGHT - BORDER_WIDTH * 2) / 4 * 4);
     }
 
     private void adjustTextPosition() {
-        adjustTextXPosition();
-        adjustTextYPosition();
+        adjustCountXPosition();
+        adjustCountYPosition();
     }
 
     @Override
@@ -168,8 +201,12 @@ public class Card extends RootObject {
         graphics2D.setColor(color);
         graphics2D.fillRoundRect(x + BORDER_WIDTH, y + BORDER_WIDTH,
                 WIDTH - BORDER_WIDTH * 2, HEIGHT - BORDER_WIDTH * 2, ROUNDNESS, ROUNDNESS);
-        graphics2D.setColor(text.getTextFormat().getColor());
-        text.render(graphics);
+        graphics2D.setColor(count.getTextFormat().getColor());
+        count.render(graphics);
+        prise1.render(graphics);
+        prise2.render(graphics);
+        prise3.render(graphics);
+        prise4.render(graphics);
 
         if (isPreviewing()) {
             cardPreview.render(graphics);
@@ -187,13 +224,13 @@ public class Card extends RootObject {
     public void setX(int x) {
         this.x = x;
         cardPreview = new CardPreview(this);
-        adjustTextXPosition();
+        adjustCountXPosition();
     }
 
     public void setY(int y) {
         this.y = y;
         cardPreview = new CardPreview(this);
-        adjustTextYPosition();
+        adjustCountYPosition();
     }
 
     public int getX() {

@@ -1,9 +1,14 @@
 package prj.sch.chocosheep.game;
 
+import prj.sch.chocosheep.Const;
+import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.functions.Positioning;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
 import prj.sch.chocosheep.rootobject.Card;
+import prj.sch.chocosheep.rootobject.Text;
 
+import javax.swing.text.Position;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -24,6 +29,7 @@ public class Set {
     private int count;
     private Display display;
     private MouseManager mouseManager;
+    private Text countText;
 
     private ArrayList<Card> cards;
 
@@ -40,6 +46,9 @@ public class Set {
         cards = new ArrayList<>();
 
         readjustY();
+
+        TextFormat textFormat = new TextFormat(Const.FONT_PATH, 18, Const.WHITE);
+        countText = new Text(0, display.getHeight() - 320, "", textFormat);
     }
 
     private static int[] getListByType(Card.Type type) {
@@ -105,18 +114,17 @@ public class Set {
         for (Card card : cards) {
             card.tick();
         }
+        countText.setText("" + count);
     }
 
     public void render(Graphics graphics, int setNumber) {
         int x = display.getWidth() / 2 - (setNumber + 1) * (Card.WIDTH + 10);
+        countText.setX(x + Positioning.center(Card.WIDTH, countText.getWidth()));
+        countText.render(graphics);
         for (Card card : cards) {
             card.setX(x);
             card.render(graphics);
         }
-    }
-
-    public void remove(int count) {
-        this.count -= count;
     }
 
     public void addCard() {
@@ -128,7 +136,7 @@ public class Set {
         cards.clear();
         for (int i = count - 1; i >= 0; i--) {
             Card card = new Card(type, mouseManager);
-            card.setY(display.getHeight() - 400 + i * 30);
+            card.setY(display.getHeight() - 300 + i * 30);
             cards.add(card);
         }
     }

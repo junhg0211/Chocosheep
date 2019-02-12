@@ -9,7 +9,7 @@ public class Text extends RootObject {
     private String text;
     private TextFormat textFormat;
 
-    Text(int x, int y, String text, TextFormat textFormat) {
+    public Text(int x, int y, String text, TextFormat textFormat) {
         this.x = x;
         this.y = y;
         this.text = text;
@@ -26,7 +26,7 @@ public class Text extends RootObject {
         graphics2D.drawString(text, x, y);
     }
 
-    int getWidth() {
+    public int getWidth() {
         return textFormat.stringWidth(text);
     }
 
@@ -47,7 +47,7 @@ public class Text extends RootObject {
         this.y = y;
     }
 
-    void setText(String text) {
+    public void setText(String text) {
         this.text = text;
     }
 

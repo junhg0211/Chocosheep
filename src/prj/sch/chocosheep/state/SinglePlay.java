@@ -1,14 +1,14 @@
 package prj.sch.chocosheep.state;
 
+import prj.sch.chocosheep.Const;
+import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.functions.Positioning;
 import prj.sch.chocosheep.game.Set;
 import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
 import prj.sch.chocosheep.root.Root;
-import prj.sch.chocosheep.rootobject.Card;
-import prj.sch.chocosheep.rootobject.MoneyCard;
-import prj.sch.chocosheep.rootobject.SettingWindow;
-import prj.sch.chocosheep.rootobject.Tablecloth;
+import prj.sch.chocosheep.rootobject.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -34,12 +34,13 @@ class SinglePlay extends State {
 
     private ArrayList<Card> leaveCards;
 
-    private int money, setCount;
+    private int money, setLimit;
     private ArrayList<Set> sets;
     private ArrayList<Card> having;
     private Card selectedCard;
 
     private MoneyCard moneyCard;
+    private Text moneyCardText;
 
     SinglePlay(Root root, Display display, KeyManager keyManager, MouseManager mouseManager) {
         this.root = root;
@@ -59,6 +60,9 @@ class SinglePlay extends State {
 
         moneyCard = new MoneyCard(display.getWidth() - 400, 0);
         moneyCard.setY(display.getHeight() - Card.HEIGHT - 150);
+
+        moneyCardText = new Text(0, display.getHeight() - 320, "",
+                new TextFormat(Const.FONT_PATH, 18, Const.WHITE));
     }
 
     @Override
@@ -73,12 +77,14 @@ class SinglePlay extends State {
                 situation = Situation.PLAYING;
                 leaveCards = Card.getRandomizedDeck(mouseManager);
 
-                setCount = 2;
+                setLimit = 2;
                 having = new ArrayList<>();
                 sets = new ArrayList<>();
                 money = 0;
             }
         } else if (situation == Situation.PLAYING) {
+            System.out.println(leaveCards.size());
+
             for (Set set : sets) {
                 set.tick();
             }
@@ -99,7 +105,7 @@ class SinglePlay extends State {
                         having.remove(selectedCard);
                         set.addCard();
                     } catch (ArrayIndexOutOfBoundsException ignored) {
-                        if (sets.size() < setCount) {
+                        if (sets.size() < setLimit) {
                             sets.add(new Set(selectedCard.getType(), 1, display, mouseManager));
                             having.remove(selectedCard);
                         }
@@ -107,12 +113,15 @@ class SinglePlay extends State {
                 } else if (startKeys[KeyEvent.VK_X]) {  // 스루
                     having.remove(selectedCard);
                 } else if (getSecondKeyboardLineToInteger(startKeys) >= 0) {  // 교환
-                    int setNumber = sets.size() - 1 - getSecondKeyboardLineToInteger(startKeys);
+                    int setNumber = setLimit - 1 - getSecondKeyboardLineToInteger(startKeys);
 
                     if (sets.size() >= setNumber + 1 && setNumber >= 0) {
                         int money = sets.get(setNumber).toMoney();
                         if (money > 0) {
                             this.money += money;
+                            moneyCardText.setX(moneyCard.getX() +
+                                    Positioning.center(Card.WIDTH, moneyCardText.getWidth()));
+                            moneyCardText.setText("" + this.money);
                             sets.get(setNumber).removeCardByMoney(money);
                             if (sets.get(setNumber).getCount() == 0) {
                                 sets.remove(setNumber);
@@ -120,7 +129,7 @@ class SinglePlay extends State {
                         }
                     }
                 } else if (getThirdKeyboardLineToInteger(startKeys) >= 0) { // 버림
-                    int setNumber = sets.size() - 1 - getThirdKeyboardLineToInteger(startKeys);
+                    int setNumber = setLimit - 1 - getThirdKeyboardLineToInteger(startKeys);
 
                     if (sets.size() >= setNumber + 1 && setNumber >= 0) {
                         sets.remove(setNumber);
@@ -164,7 +173,7 @@ class SinglePlay extends State {
     }
 
     private void share() {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < (leaveCards.size() >= 5 ? 5 : leaveCards.size()); i++) {
             having.add(leaveCards.get(0));
             leaveCards.remove(0);
         }
@@ -177,6 +186,12 @@ class SinglePlay extends State {
         if (situation == Situation.SETTING) {
             settingWindow.render(graphics);
         } else if (situation == Situation.PLAYING) {
+            graphics.setColor(new Color(Const.BLACK.getRed(), Const.BLACK.getGreen(), Const.BLACK.getBlue(), 127));
+            for (int i = 0; i < setLimit; i++) {
+                graphics.fillRoundRect(display.getWidth() / 2 - (i + 1) * (Card.WIDTH + 10),
+                        display.getHeight() - 300, Card.WIDTH, Card.HEIGHT, Card.ROUNDNESS, Card.ROUNDNESS);
+            }
+
             for (int i = having.size() - 1; i >= 0; i--) {
                 Card card = having.get(i);
                 card.setX(display.getWidth() / 2 + i * 50 + 200);
@@ -188,6 +203,7 @@ class SinglePlay extends State {
             }
             if (money > 0) {
                 moneyCard.render(graphics);
+                moneyCardText.render(graphics);
             }
         }
     }

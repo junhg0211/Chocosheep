@@ -52,4 +52,8 @@ public class MoneyCard extends RootObject {
         this.y = y;
         backTerroText.setY(y + Positioning.center(HEIGHT, backTerroText.getHeight()) + backTerroText.getHeight() - 10);
     }
+
+    public int getX() {
+        return x;
+    }
 }

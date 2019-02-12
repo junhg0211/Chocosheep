@@ -14,7 +14,7 @@ public class CardPreview extends RootObject {
     private Color color;
     private float opacity;
 
-    private Text count;
+    private Text count, name;
     private Text[] prise;
 
     CardPreview(Card card) {
@@ -24,7 +24,7 @@ public class CardPreview extends RootObject {
     }
 
     private void init() {
-        h = 50;
+        h = 120;
         w = Card.WIDTH + 100;
         x = card.getX() - 50;
         y = card.getY() - h - 10;
@@ -74,9 +74,13 @@ public class CardPreview extends RootObject {
         String[] priseText = {"" + list[0], "" + list[1], "" + list[2], "" + list[3]};
 
         count = new Text(0, 0, countText, countTextFormat);
-        count.setX(x + 7);
-        count.setY(card.getY() + 7 + Positioning.center(h, count.getHeight()) - count.getHeight());
+        count.setX(x + 15);
+        count.setY(y + h - 21);
         prise = new Text[4];
+
+        name = new Text(0, 0, "" + card.getType(), countTextFormat);
+        name.setX(x + Positioning.center(w, name.getWidth()));
+        name.setY(y + 15 + name.getHeight());
 
         int textAreaWidth = (int) ((w - 21 - count.getWidth()) / 4.5);
         int priseY = y + h - 21;
@@ -91,6 +95,7 @@ public class CardPreview extends RootObject {
         graphics.setColor(new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, opacity));
         graphics.fillRoundRect(x, y, w, h, 10, 10);
 
+        name.render(graphics);
         count.render(graphics);
         for (int i = 0; i < 4; i++) {
             prise[i].render(graphics);
