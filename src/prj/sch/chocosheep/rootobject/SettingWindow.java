@@ -14,7 +14,7 @@ public class SettingWindow extends RootObject {
     private KeyManager keyManager;
 
     private int rounds, tradeLimit;
-    private boolean sortedOrder;
+    private boolean orderNeedToBeSorted;
 
     private TextFormat indexNameTextFormat, valueTextFormat;
     private ArrayList<Text> texts;
@@ -29,7 +29,7 @@ public class SettingWindow extends RootObject {
 
     private void init() {
         rounds = 1;
-        sortedOrder = true;
+        orderNeedToBeSorted = true;
         tradeLimit = 4;
 
         indexNameTextFormat = new TextFormat(Const.FONT_PATH, 36, Const.WHITE);
@@ -83,8 +83,8 @@ public class SettingWindow extends RootObject {
             rounds = 9;
             roundsText.setText("9");
         } else if (startKeys[KeyEvent.VK_0] || startKeys[KeyEvent.VK_NUMPAD0]) {
-            sortedOrder = !sortedOrder;
-            sortedOrderText.setText(sortedOrder ? "O" : "X");
+            orderNeedToBeSorted = !orderNeedToBeSorted;
+            sortedOrderText.setText(orderNeedToBeSorted ? "O" : "X");
         } else if (startKeys[KeyEvent.VK_Q]) {
             tradeLimit = 1;
             tradeLimitText.setText("1");
@@ -158,11 +158,7 @@ public class SettingWindow extends RootObject {
         return rounds;
     }
 
-    public boolean isSortedOrder() {
-        return sortedOrder;
-    }
-
-    public int getTradeLimit() {
-        return tradeLimit;
+    public boolean isOrderNeedToBeSorted() {
+        return orderNeedToBeSorted;
     }
 }

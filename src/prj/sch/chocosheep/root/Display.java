@@ -84,7 +84,7 @@ public class Display {
         return displayFps;
     }
 
-    public void setDisplayFps(double displayFps) {
+    void setDisplayFps(double displayFps) {
         this.displayFps = displayFps;
     }
 }

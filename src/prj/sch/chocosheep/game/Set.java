@@ -47,7 +47,7 @@ public class Set {
         readjustY();
 
         TextFormat textFormat = new TextFormat(Const.FONT_PATH, 18, Const.WHITE);
-        countText = new Text(0, display.getHeight() - 320, "", textFormat);
+        countText = new Text(0, display.getHeight() - 320, "" + count, textFormat);
     }
 
     private static int[] getListByType(Card.Type type) {
@@ -77,6 +77,7 @@ public class Set {
         }
         count -= getCardCountByMoney(money);
         readjustY();
+        countText.setText("" + count);
     }
 
     private int getCardCountByMoney(int money) {
@@ -86,21 +87,7 @@ public class Set {
             return 0;
         }
 
-        if (type == Card.Type.KAO) {
-            if (list[3] >= money) return 4;
-            else if (list[2] >= money) return 3;
-            else if (list[1] >= money) return 2;
-        } else if (type == Card.Type.GARTAR) {
-            if (list[2] >= money) return 3;
-            else if (list[1] >= money) return 2;
-        } else {
-            if (list[3] >= money) return 4;
-            else if (list[2] >= money) return 3;
-            else if (list[1] >= money) return 2;
-            else if (list[0] >= money) return 1;
-        }
-
-        return 0;
+        return list[money - 1];
     }
 
     public int toMoney() {
@@ -110,10 +97,20 @@ public class Set {
             return 0;
         }
 
-        if (count >= list[3]) return 4;
-        else if (count >= list[2]) return 3;
-        else if (count >= list[1]) return 2;
-        else if (count >= list[0]) return 1;
+        if (type == Card.Type.KAO) {
+            if (count >= list[3]) return 4;
+            else if (count >= list[2]) return 3;
+            else if (count >= list[1]) return 2;
+        } else if (type == Card.Type.GARTAR) {
+            if (count >= list[2]) return 3;
+            else if (count >= list[1]) return 2;
+            else if (count >= list[0]) return 1;
+        } else {
+            if (count >= list[3]) return 4;
+            else if (count >= list[2]) return 3;
+            else if (count >= list[1]) return 2;
+            else if (count >= list[0]) return 1;
+        }
 
         return 0;
     }
@@ -122,7 +119,6 @@ public class Set {
         for (Card card : cards) {
             card.tick();
         }
-        countText.setText("" + count);
     }
 
     public void render(Graphics graphics, int setNumber) {
@@ -138,12 +134,13 @@ public class Set {
     public void addCard() {
         count += 1;
         readjustY();
+        countText.setText("" + count);
     }
 
     private void readjustY() {
         cards.clear();
         for (int i = count - 1; i >= 0; i--) {
-            Card card = new Card(type, mouseManager);
+            Card card = new Card(type, mouseManager, display);
             card.setY(display.getHeight() - 300 + i * 30);
             cards.add(card);
         }

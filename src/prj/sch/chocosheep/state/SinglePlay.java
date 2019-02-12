@@ -7,43 +7,41 @@ import prj.sch.chocosheep.game.Set;
 import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
-import prj.sch.chocosheep.root.Root;
 import prj.sch.chocosheep.rootobject.*;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-class SinglePlay extends State {
-    private Root root;
+public class SinglePlay extends State {
     private Display display;
     private KeyManager keyManager;
     private MouseManager mouseManager;
 
     private Tablecloth tablecloth;
 
-    private enum Situation {
-        SETTING, PLAYING
-    }
+    private enum Situation { SETTING, PLAYING, RESULT }
     private Situation situation;
 
     private SettingWindow settingWindow;
 
-    private int rounds, tradeLimit;
-    private boolean sortedOrder;
+    private int leaveRounds;
+    private boolean orderNeedToBeSorted;
 
     private ArrayList<Card> leaveCards;
+    private MoneyCard leaveCard;
+    private Text leaveCardCount;
 
     private int money, setLimit;
     private ArrayList<Set> sets;
     private ArrayList<Card> having;
+    private int selectedCardIndex;
     private Card selectedCard;
 
     private MoneyCard moneyCard;
     private Text moneyCardText;
 
-    SinglePlay(Root root, Display display, KeyManager keyManager, MouseManager mouseManager) {
-        this.root = root;
+    SinglePlay(Display display, KeyManager keyManager, MouseManager mouseManager) {
         this.display = display;
         this.keyManager = keyManager;
         this.mouseManager = mouseManager;
@@ -61,8 +59,19 @@ class SinglePlay extends State {
         moneyCard = new MoneyCard(display.getWidth() - 400, 0);
         moneyCard.setY(display.getHeight() - Card.HEIGHT - 150);
 
-        moneyCardText = new Text(0, display.getHeight() - 320, "",
-                new TextFormat(Const.FONT_PATH, 18, Const.WHITE));
+        moneyCardText = new Text(0, display.getHeight() - 320, "", new TextFormat(Const.FONT_PATH, 18, Const.WHITE));
+
+        leaveCard = new MoneyCard(0, 0);
+        leaveCardCount = new Text(0, 0, "", new TextFormat(Const.FONT_PATH, 72, Const.WHITE));
+        readjustLeaveCardText();
+
+        selectedCardIndex = 0;
+    }
+
+    private void resetGame() {
+        money = 0;
+        setLimit = 2;
+        leaveCards = Card.getRandomizedDeck(mouseManager, display);
     }
 
     @Override
@@ -71,30 +80,29 @@ class SinglePlay extends State {
             settingWindow.tick();
 
             if (keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
-                rounds = settingWindow.getRounds();
-                sortedOrder = settingWindow.isSortedOrder();
-                tradeLimit = settingWindow.getTradeLimit();
+                leaveRounds = settingWindow.getRounds();
+                orderNeedToBeSorted = settingWindow.isOrderNeedToBeSorted();
                 situation = Situation.PLAYING;
-                leaveCards = Card.getRandomizedDeck(mouseManager);
 
-                setLimit = 2;
                 having = new ArrayList<>();
                 sets = new ArrayList<>();
-                money = 0;
+
+                resetGame();
             }
         } else if (situation == Situation.PLAYING) {
-            for (Set set : sets) {
-                set.tick();
-            }
-            for (int i = having.size() - 1; i >= 0; i--) {
-                having.get(i).tick();
-            }
-
             if (having.size() == 0) {
-                share();
+                if (leaveRounds > 0) {
+                    share();
+                } else {
+                    situation = Situation.RESULT;
+                }
             } else {
-                selectedCard = having.get(0);
-
+                try {
+                    selectedCard = having.get(selectedCardIndex);
+                } catch (IndexOutOfBoundsException e) {
+                    selectedCardIndex = having.size() - 1;
+                    selectedCard = having.get(selectedCardIndex);
+                }
                 boolean[] startKeys = keyManager.getStartKeys();
 
                 if (startKeys[KeyEvent.VK_Z]) {  // 스택
@@ -121,7 +129,6 @@ class SinglePlay extends State {
                                     Positioning.center(Card.WIDTH, moneyCardText.getWidth()));
                             moneyCardText.setText("" + this.money);
                             sets.get(setNumber).removeCardByMoney(money);
-                            System.out.println(money);
                             if (sets.get(setNumber).getCount() == 0) {
                                 sets.remove(setNumber);
                             }
@@ -133,8 +140,33 @@ class SinglePlay extends State {
                     if (sets.size() >= setNumber + 1 && setNumber >= 0) {
                         sets.remove(setNumber);
                     }
+                } else if (startKeys[KeyEvent.VK_SHIFT]) {  // 세트 리밋 구매
+                    if (setLimit + 1 <= money) {
+                        setLimit++;
+                        money -= setLimit;
+                        moneyCardText.setText("" + money);
+                    }
+                } else if (startKeys[KeyEvent.VK_C]) {  // 카드 선택 변경 (왼쪽)
+                    if (!orderNeedToBeSorted) {
+                        selectedCardIndex--;
+                        if (selectedCardIndex < 0) {
+                            selectedCardIndex = 0;
+                        }
+                    }
+                } else if (startKeys[KeyEvent.VK_V]) {  // 카드 선택 변경 (오른쪽)
+                    if (!orderNeedToBeSorted) {
+                        selectedCardIndex++;
+                        if (selectedCardIndex > having.size() - 1) {
+                            selectedCardIndex = having.size() - 1;
+                        }
+                    }
                 }
             }
+
+            for (Set set : sets)
+                set.tick();
+            for (int i = having.size() - 1; i >= 0; i--)
+                having.get(i).tick();
         }
     }
 
@@ -172,10 +204,13 @@ class SinglePlay extends State {
     }
 
     private void share() {
-        for (int i = 0; i < (leaveCards.size() >= 5 ? 5 : leaveCards.size()); i++) {
+        int leaveCardsCount = leaveCards.size() >= 5 ? 5 : leaveCards.size();
+        for (int i = 0; i < leaveCardsCount; i++) {
             having.add(leaveCards.get(0));
             leaveCards.remove(0);
         }
+        leaveCardCount.setText("" + leaveCards.size());
+        readjustLeaveCardText();
     }
 
     @Override
@@ -194,12 +229,16 @@ class SinglePlay extends State {
             for (int i = having.size() - 1; i >= 0; i--) {
                 Card card = having.get(i);
                 card.setX(display.getWidth() / 2 + i * 50 + 200);
-                card.setY(display.getHeight() - Card.HEIGHT - 150);
+                card.setY(display.getHeight() - Card.HEIGHT - 150 - (card == selectedCard ? 20 : 0));
                 card.render(graphics);
             }
             for (int i = 0; i < sets.size(); i++) {
                 sets.get(i).render(graphics, i);
             }
+
+            leaveCard.render(graphics);
+            leaveCardCount.render(graphics);
+
             if (money > 0) {
                 moneyCard.render(graphics);
                 moneyCardText.render(graphics);
@@ -207,9 +246,19 @@ class SinglePlay extends State {
         }
     }
 
+    private void readjustLeaveCardText() {
+        leaveCard.setX(Positioning.center(display.getWidth(), Card.WIDTH + 40 + leaveCardCount.getWidth()));
+        leaveCard.setY(Positioning.center(display.getHeight(), Card.HEIGHT));
+        leaveCardCount.setX(display.getWidth() -
+                Positioning.center(display.getWidth(), Card.WIDTH + 40 + leaveCardCount.getWidth()) - leaveCardCount.getWidth());
+        leaveCardCount.setY((int) (Positioning.center(display.getHeight(), leaveCardCount.getHeight()) +
+                        leaveCardCount.getTextFormat().getSize() * 0.75));
+    }
+
     @Override
     public void windowResize() {
         tablecloth.windowResize();
         settingWindow.windowResize();
+        readjustLeaveCardText();
     }
 }

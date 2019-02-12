@@ -87,26 +87,23 @@ public class Root implements Runnable {
 
     @Override
     public void run() {
-        double timePerLoop = 1000000000 / display.getFps();
-        double delta = 0;
+        long timePerLoop = (long) (1000 / display.getFps());
 
-        long previousLoop, loop = System.nanoTime();
-        long previousFrame, frame = System.currentTimeMillis();
+        long previousFrame = System.currentTimeMillis(), frame = System.currentTimeMillis();
 
         while (running) {
-            previousLoop = loop;
-            loop = System.nanoTime();
-
-            delta += (loop - previousLoop) / timePerLoop;
-            if (delta >= 1) {
-                delta--;
-                previousFrame = frame;
-                frame = System.currentTimeMillis();
-                display.setDisplayFps(1000.0 / (frame - previousFrame));
-
-                tick();
-                render();
+            try {
+                Thread.sleep(Math.max(timePerLoop - ((frame - previousFrame) - timePerLoop), 0));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+
+            previousFrame = frame;
+            frame = System.currentTimeMillis();
+            display.setDisplayFps(1000.0 / (frame - previousFrame));
+
+            tick();
+            render();
         }
 
         stop();

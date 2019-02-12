@@ -4,9 +4,11 @@ import prj.sch.chocosheep.Const;
 import prj.sch.chocosheep.TextFormat;
 import prj.sch.chocosheep.game.Set;
 import prj.sch.chocosheep.input.MouseManager;
+import prj.sch.chocosheep.root.Display;
+import prj.sch.chocosheep.root.Root;
+import prj.sch.chocosheep.state.SinglePlay;
 
 import java.awt.*;
-import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -18,38 +20,38 @@ public class Card extends RootObject {
     static int BORDER_WIDTH = 10;
     static float SHADOW_OPACITY = 0.5f;
 
-    private static ArrayList<Card> getSortedDeck(MouseManager mouseManager) {
+    private static ArrayList<Card> getSortedDeck(MouseManager mouseManager, Display display) {
         ArrayList<Card> deck = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
-            deck.add(new Card(Type.KAO, mouseManager));
+            deck.add(new Card(Type.KAO, mouseManager, display));
         } for (int i = 0; i < 6; i++) {
-            deck.add(new Card(Type.GARTAR, mouseManager));
+            deck.add(new Card(Type.GARTAR, mouseManager, display));
         } for (int i = 0; i < 8; i++) {
-            deck.add(new Card(Type.ROTTAR, mouseManager));
+            deck.add(new Card(Type.ROTTAR, mouseManager, display));
         } for (int i = 0; i < 10; i++) {
-            deck.add(new Card(Type.ORGAN, mouseManager));
+            deck.add(new Card(Type.ORGAN, mouseManager, display));
         } for (int i = 0; i < 12; i++) {
-            deck.add(new Card(Type.SOYAR, mouseManager));
+            deck.add(new Card(Type.SOYAR, mouseManager, display));
         } for (int i = 0; i < 14; i++) {
-            deck.add(new Card(Type.BAAW, mouseManager));
+            deck.add(new Card(Type.BAAW, mouseManager, display));
         } for (int i = 0; i < 16; i++) {
-            deck.add(new Card(Type.SORVOR, mouseManager));
+            deck.add(new Card(Type.SORVOR, mouseManager, display));
         } for (int i = 0; i < 18; i++) {
-            deck.add(new Card(Type.PHORE, mouseManager));
+            deck.add(new Card(Type.PHORE, mouseManager, display));
         } for (int i = 0; i < 20; i++) {
-            deck.add(new Card(Type.BOVIE, mouseManager));
+            deck.add(new Card(Type.BOVIE, mouseManager, display));
         } for (int i = 0; i < 22; i++) {
-            deck.add(new Card(Type.BAINNE, mouseManager));
+            deck.add(new Card(Type.BAINNE, mouseManager, display));
         } for (int i = 0; i < 24; i++) {
-            deck.add(new Card(Type.BONAR, mouseManager));
+            deck.add(new Card(Type.BONAR, mouseManager, display));
         }
 
         return deck;
     }
 
-    public static ArrayList<Card> getRandomizedDeck(MouseManager mouseManager) {
-        ArrayList<Card> deck = getSortedDeck(mouseManager);
+    public static ArrayList<Card> getRandomizedDeck(MouseManager mouseManager, Display display) {
+        ArrayList<Card> deck = getSortedDeck(mouseManager, display);
 
         Collections.shuffle(deck);
 
@@ -58,10 +60,11 @@ public class Card extends RootObject {
 
     public static Card previewing, previousPreviewing;
 
-    public enum Type { KAO, GARTAR, ROTTAR, ORGAN, SOYAR, BAAW, SORVOR, PHORE, BOVIE, BAINNE, BONAR, NULL }
+    public enum Type { KAO, GARTAR, ROTTAR, ORGAN, SOYAR, BAAW, SORVOR, PHORE, BOVIE, BAINNE, BONAR }
 
     private Type type;
     private MouseManager mouseManager;
+    private Display display;
 
     private int x, y;
     private Color color;
@@ -70,9 +73,10 @@ public class Card extends RootObject {
     private Text count;
     private Text prise1, prise2, prise3, prise4;
 
-    public Card(Type type, MouseManager mouseManager) {
+    public Card(Type type, MouseManager mouseManager, Display display) {
         this.type = type;
         this.mouseManager = mouseManager;
+        this.display = display;
 
         init();
     }
@@ -140,10 +144,10 @@ public class Card extends RootObject {
         }
 
         TextFormat priseTextFormat = new TextFormat(Const.FONT_PATH, 16, count.getTextFormat().getColor());
-        prise1 = new Text(0, 0, "" + list[0], priseTextFormat);
+        prise1 = new Text(0, 0, "" + (list[0] != 0 ? list[0] : ""), priseTextFormat);
         prise2 = new Text(0, 0, "" + list[1], priseTextFormat);
         prise3 = new Text(0, 0, "" + list[2], priseTextFormat);
-        prise4 = new Text(0, 0, "" + list[3], priseTextFormat);
+        prise4 = new Text(0, 0, "" + (list[3] != 0 ? list[3] : ""), priseTextFormat);
 
         adjustTextPosition();
 
@@ -202,18 +206,20 @@ public class Card extends RootObject {
         graphics2D.fillRoundRect(x + BORDER_WIDTH, y + BORDER_WIDTH,
                 WIDTH - BORDER_WIDTH * 2, HEIGHT - BORDER_WIDTH * 2, ROUNDNESS, ROUNDNESS);
         graphics2D.setColor(count.getTextFormat().getColor());
+
         count.render(graphics);
-        prise1.render(graphics);
+        if (!prise1.getText().equals("")) prise1.render(graphics);
         prise2.render(graphics);
         prise3.render(graphics);
-        prise4.render(graphics);
+        if (!prise4.getText().equals("")) prise4.render(graphics);
 
         if (isPreviewing()) {
             cardPreview.render(graphics);
         }
     }
 
-    static void drawShadow(Graphics2D graphics2D, int x, int y, int w, int h, int shadowDepth, int roundness, float shadowOpacity) {
+    static void drawShadow(Graphics2D graphics2D, int x, int y, int w, int h,
+                           int shadowDepth, int roundness, float shadowOpacity) {
         graphics2D.setColor(new Color(0, 0, 0, shadowOpacity / shadowDepth));
         for (int i = shadowDepth; i >= 0; i--) {
             graphics2D.fillRoundRect(x - i, y - i, w + i * 2, h + i * 2,
@@ -237,7 +243,7 @@ public class Card extends RootObject {
         return x;
     }
 
-    public int getY() {
+    int getY() {
         return y;
     }
 
