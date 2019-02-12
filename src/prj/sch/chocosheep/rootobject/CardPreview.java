@@ -3,6 +3,7 @@ package prj.sch.chocosheep.rootobject;
 import prj.sch.chocosheep.Const;
 import prj.sch.chocosheep.TextFormat;
 import prj.sch.chocosheep.functions.Positioning;
+import prj.sch.chocosheep.game.Set;
 
 import java.awt.*;
 
@@ -24,7 +25,7 @@ public class CardPreview extends RootObject {
 
     private void init() {
         h = 50;
-        w = card.getWidth() + 100;
+        w = Card.WIDTH + 100;
         x = card.getX() - 50;
         y = card.getY() - h - 10;
         color = Const.BLACK;
@@ -34,41 +35,43 @@ public class CardPreview extends RootObject {
         TextFormat priseTextFormat = new TextFormat(Const.FONT_PATH, 15, Const.WHITE);
 
         String countText;
-        String[] priseText;
+        int[] list;
         if (card.getType() == Card.Type.KAO) {
             countText = "4";
-            priseText = new String[] {"X", "2", "3", "4"};
+            list = Set.KAO;
         } else if (card.getType() == Card.Type.GARTAR) {
             countText = "6";
-            priseText = new String[] {"X", "2", "3", "X"};
+            list = Set.GARTAR;
         } else if (card.getType() == Card.Type.ROTTAR) {
             countText = "8";
-            priseText = new String[] {"2", "3", "4", "5"};
+            list = Set.ROTTAR;
         } else if (card.getType() == Card.Type.ORGAN) {
             countText = "10";
-            priseText = new String[] {"2", "4", "5", "6"};
+            list = Set.ORGAN;
         } else if (card.getType() == Card.Type.SOYAR) {
             countText = "12";
-            priseText = new String[] {"2", "4", "6", "7"};
+            list = Set.SOYAR;
         } else if (card.getType() == Card.Type.BAAW) {
             countText = "14";
-            priseText = new String[] {"3", "5", "7", "7"};
+            list = Set.BAAW;
         } else if (card.getType() == Card.Type.SORVOR) {
             countText = "16";
-            priseText = new String[] {"3", "5", "7", "8"};
+            list = Set.SORVOR;
         } else if (card.getType() == Card.Type.PHORE) {
             countText = "18";
-            priseText = new String[] {"3", "6", "8", "9"};
+            list = Set.PHORE;
         } else if (card.getType() == Card.Type.BOVIE) {
             countText = "20";
-            priseText = new String[] {"4", "6", "8", "10"};
+            list = Set.BOVIE;
         } else if (card.getType() == Card.Type.BAINNE) {
             countText = "22";
-            priseText = new String[] {"4", "7", "9", "11"};
+            list = Set.BAINNE;
         } else {
             countText = "24";
-            priseText = new String[] {"4", "7", "10", "12"};
+            list = Set.BONAR;
         }
+
+        String[] priseText = {"" + list[0], "" + list[1], "" + list[2], "" + list[3]};
 
         count = new Text(0, 0, countText, countTextFormat);
         count.setX(x + 7);

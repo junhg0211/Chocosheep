@@ -129,7 +129,11 @@ public class Root implements Runnable {
         return state;
     }
 
-    public KeyManager getKeyManager() {
-        return keyManager;
+    public Display getDisplay() {
+        return display;
+    }
+
+    public MouseManager getMouseManager() {
+        return mouseManager;
     }
 }

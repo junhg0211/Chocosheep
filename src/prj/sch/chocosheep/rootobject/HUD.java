@@ -9,7 +9,7 @@ public class HUD extends RootObject {
     private Root root;
     private TextFormat textFormat;
 
-    private Text state;
+    private Text state, fps, cursor;
 
     public HUD(Root root, TextFormat textFormat) {
         this.root = root;
@@ -20,15 +20,21 @@ public class HUD extends RootObject {
 
     private void init() {
         state = new Text(0, (int) textFormat.getSize(), "", textFormat);
+        fps = new Text(0, (int) (textFormat.getSize() * 2), "", textFormat);
+        cursor = new Text(0, (int) (textFormat.getSize() * 3), "", textFormat);
     }
 
     @Override
     public void tick() {
-        state.setText("s: " + root.getState());
+        state.setText("s " + root.getState());
+        fps.setText((int) root.getDisplay().getDisplayFps() + " fps");
+        cursor.setText("c " + root.getMouseManager().getX() + " " + root.getMouseManager().getY());
     }
 
     @Override
     public void render(Graphics graphics) {
         state.render(graphics);
+        fps.render(graphics);
+        cursor.render(graphics);
     }
 }

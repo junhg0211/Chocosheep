@@ -6,6 +6,7 @@ import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
 import prj.sch.chocosheep.root.Root;
 import prj.sch.chocosheep.rootobject.Card;
+import prj.sch.chocosheep.rootobject.MoneyCard;
 import prj.sch.chocosheep.rootobject.SettingWindow;
 import prj.sch.chocosheep.rootobject.Tablecloth;
 
@@ -38,6 +39,8 @@ class SinglePlay extends State {
     private ArrayList<Card> having;
     private Card selectedCard;
 
+    private MoneyCard moneyCard;
+
     SinglePlay(Root root, Display display, KeyManager keyManager, MouseManager mouseManager) {
         this.root = root;
         this.display = display;
@@ -53,6 +56,9 @@ class SinglePlay extends State {
         situation = Situation.SETTING;
 
         settingWindow = new SettingWindow(display, keyManager);
+
+        moneyCard = new MoneyCard(display.getWidth() - 400, 0);
+        moneyCard.setY(display.getHeight() - Card.HEIGHT - 150);
     }
 
     @Override
@@ -85,24 +91,67 @@ class SinglePlay extends State {
             } else {
                 selectedCard = having.get(0);
 
-                if (keyManager.getStartKeys()[KeyEvent.VK_Z]) {  // 스택
+                boolean[] startKeys = keyManager.getStartKeys();
+
+                if (startKeys[KeyEvent.VK_Z]) {  // 스택
                     try {
                         Set set = getSetByType(selectedCard.getType());
                         having.remove(selectedCard);
                         set.addCard();
-                        System.out.println("ADDED");
                     } catch (ArrayIndexOutOfBoundsException ignored) {
                         if (sets.size() < setCount) {
                             sets.add(new Set(selectedCard.getType(), 1, display, mouseManager));
                             having.remove(selectedCard);
-                            System.out.println("CREATED");
                         }
                     }
-                } else if (keyManager.getStartKeys()[KeyEvent.VK_X]) {  // 스루
+                } else if (startKeys[KeyEvent.VK_X]) {  // 스루
                     having.remove(selectedCard);
+                } else if (getSecondKeyboardLineToInteger(startKeys) >= 0) {  // 교환
+                    int setNumber = sets.size() - 1 - getSecondKeyboardLineToInteger(startKeys);
+
+                    if (sets.size() >= setNumber + 1 && setNumber >= 0) {
+                        int money = sets.get(setNumber).toMoney();
+                        if (money > 0) {
+                            this.money += money;
+                            sets.get(setNumber).removeCardByMoney(money);
+                            if (sets.get(setNumber).getCount() == 0) {
+                                sets.remove(setNumber);
+                            }
+                        }
+                    }
+                } else if (getThirdKeyboardLineToInteger(startKeys) >= 0) { // 버림
+                    int setNumber = sets.size() - 1 - getThirdKeyboardLineToInteger(startKeys);
+
+                    if (sets.size() >= setNumber + 1 && setNumber >= 0) {
+                        sets.remove(setNumber);
+                    }
                 }
             }
         }
+    }
+
+    private int getSecondKeyboardLineToInteger(boolean[] keys) {
+        if (keys[KeyEvent.VK_A]) return 0;
+        else if (keys[KeyEvent.VK_S]) return 1;
+        else if (keys[KeyEvent.VK_D]) return 2;
+        else if (keys[KeyEvent.VK_F]) return 3;
+        else if (keys[KeyEvent.VK_G]) return 4;
+        else if (keys[KeyEvent.VK_H]) return 5;
+        else if (keys[KeyEvent.VK_J]) return 6;
+        else if (keys[KeyEvent.VK_K]) return 7;
+        else return -1;
+    }
+
+    private int getThirdKeyboardLineToInteger(boolean[] keys) {
+        if (keys[KeyEvent.VK_Q]) return 0;
+        else if (keys[KeyEvent.VK_W]) return 1;
+        else if (keys[KeyEvent.VK_E]) return 2;
+        else if (keys[KeyEvent.VK_R]) return 3;
+        else if (keys[KeyEvent.VK_T]) return 4;
+        else if (keys[KeyEvent.VK_Y]) return 5;
+        else if (keys[KeyEvent.VK_U]) return 6;
+        else if (keys[KeyEvent.VK_I]) return 7;
+        else return -1;
     }
 
     private Set getSetByType(Card.Type type) {
@@ -131,11 +180,14 @@ class SinglePlay extends State {
             for (int i = having.size() - 1; i >= 0; i--) {
                 Card card = having.get(i);
                 card.setX(display.getWidth() / 2 + i * 50 + 200);
-                card.setY(display.getHeight() - card.getHEIGHT() - 150);
+                card.setY(display.getHeight() - Card.HEIGHT - 150);
                 card.render(graphics);
             }
             for (int i = 0; i < sets.size(); i++) {
                 sets.get(i).render(graphics, i);
+            }
+            if (money > 0) {
+                moneyCard.render(graphics);
             }
         }
     }

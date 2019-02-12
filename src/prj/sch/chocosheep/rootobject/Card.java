@@ -11,10 +11,11 @@ import java.util.Collections;
 
 public class Card extends RootObject {
     public static int WIDTH = 100;
-    private static int HEIGHT = 150;
-    private static int SHADOW_DEPTH = 3;
-    private static int ROUNDNESS = 10;
-    private static float SHADOW_OPACITY = 0.5f;
+    public static int HEIGHT = 150;
+    public static int SHADOW_DEPTH = 3;
+    public static int ROUNDNESS = 10;
+    public static int BORDER_WIDTH = 10;
+    public static float SHADOW_OPACITY = 0.5f;
 
     private static ArrayList<Card> getSortedDeck(MouseManager mouseManager) {
         ArrayList<Card> deck = new ArrayList<>();
@@ -65,8 +66,7 @@ public class Card extends RootObject {
     private Color color;
     private CardPreview cardPreview;
 
-    private boolean back;
-    private Text backTerroText;
+    private Text text;
 
     public Card(Type type, MouseManager mouseManager) {
         this.type = type;
@@ -76,22 +76,68 @@ public class Card extends RootObject {
     }
 
     private void init() {
-        if (type == Type.KAO) color = Const.YELLOW;
-        else if (type == Type.GARTAR) color = Const.LIME;
-        else if (type == Type.ROTTAR) color = Const.RED;
-        else if (type == Type.ORGAN) color = Const.BLACK;
-        else if (type == Type.SOYAR) color = Const.SOY;
-        else if (type == Type.BAAW) color = Const.GREEN;
-        else if (type == Type.SORVOR) color = Const.PURPLE;
-        else if (type == Type.PHORE) color = Const.CYAN;
-        else if (type == Type.BOVIE) color = Const.BLUE;
-        else if (type == Type.BAINNE) color = Const.AQUA;
-        else if (type == Type.BONAR) color = Const.COFFEE;
+        TextFormat cardWhiteTextFormat = new TextFormat(Const.FONT_PATH, 24, Const.WHITE);
+        TextFormat cardBlackTextFormat = new TextFormat(Const.FONT_PATH, 24, Const.BLACK);
+        if (type == Type.KAO) {
+            color = Const.YELLOW;
+            text = new Text(0, 0, "4", cardBlackTextFormat);
+        }
+        else if (type == Type.GARTAR) {
+            color = Const.LIME;
+            text = new Text(0, 0, "6", cardBlackTextFormat);
+        }
+        else if (type == Type.ROTTAR) {
+            color = Const.RED;
+            text = new Text(0, 0, "8", cardWhiteTextFormat);
+        }
+        else if (type == Type.ORGAN) {
+            color = Const.BLACK;
+            text = new Text(0, 0, "10", cardWhiteTextFormat);
+        }
+        else if (type == Type.SOYAR) {
+            color = Const.SOY;
+            text = new Text(0, 0, "12", cardBlackTextFormat);
+        }
+        else if (type == Type.BAAW) {
+            color = Const.GREEN;
+            text = new Text(0, 0, "14", cardWhiteTextFormat);
+        }
+        else if (type == Type.SORVOR) {
+            color = Const.PURPLE;
+            text = new Text(0, 0, "16", cardWhiteTextFormat);
+        }
+        else if (type == Type.PHORE) {
+            color = Const.CYAN;
+            text = new Text(0, 0, "18", cardWhiteTextFormat);
+        }
+        else if (type == Type.BOVIE) {
+            color = Const.BLUE;
+            text = new Text(0, 0, "20", cardWhiteTextFormat);
+        }
+        else if (type == Type.BAINNE) {
+            color = Const.AQUA;
+            text = new Text(0, 0, "22", cardWhiteTextFormat);
+        }
+        else if (type == Type.BONAR) {
+            color = Const.COFFEE;
+            text = new Text(0, 0, "24", cardWhiteTextFormat);
+        }
+        adjustTextPosition();
 
         cardPreview = new CardPreview(this);
+    }
 
-        back = false;
-        backTerroText = new Text(0, 0, "T", new TextFormat(Const.FONT_PATH, WIDTH / 2f, Const.WHITE));
+    private void adjustTextXPosition() {
+        text.setX(x + WIDTH - text.getWidth() - BORDER_WIDTH - BORDER_WIDTH);
+    }
+
+    private void adjustTextYPosition() {
+        text.setY(y + BORDER_WIDTH * 2 + text.getHeight());
+    }
+
+    private void adjustTextPosition() {
+        adjustTextXPosition();
+        adjustTextYPosition();
     }
 
     @Override
@@ -119,21 +165,18 @@ public class Card extends RootObject {
         graphics2D.setColor(Const.WHITE);
         graphics2D.fillRoundRect(x, y, WIDTH, HEIGHT, ROUNDNESS, ROUNDNESS);
 
-        if (back) {
-            graphics2D.setColor(Const.BLACK);
-            graphics2D.fillOval(x + Positioning.center(WIDTH, WIDTH - 20), y + Positioning.center(HEIGHT, WIDTH - 20), WIDTH - 20, WIDTH - 20);
-            backTerroText.render(graphics);
-        } else {
-            graphics2D.setColor(color);
-            graphics2D.fillRoundRect(x + 10, y + 10, WIDTH - 20, HEIGHT - 20, ROUNDNESS, ROUNDNESS);
+        graphics2D.setColor(color);
+        graphics2D.fillRoundRect(x + BORDER_WIDTH, y + BORDER_WIDTH,
+                WIDTH - BORDER_WIDTH * 2, HEIGHT - BORDER_WIDTH * 2, ROUNDNESS, ROUNDNESS);
+        graphics2D.setColor(text.getTextFormat().getColor());
+        text.render(graphics);
 
-            if (isPreviewing()) {
-                cardPreview.render(graphics);
-            }
+        if (isPreviewing()) {
+            cardPreview.render(graphics);
         }
     }
 
-    private void drawShadow(Graphics2D graphics2D, int x, int y, int w, int h, int shadowDepth, int roundness, float shadowOpacity) {
+    static void drawShadow(Graphics2D graphics2D, int x, int y, int w, int h, int shadowDepth, int roundness, float shadowOpacity) {
         graphics2D.setColor(new Color(0, 0, 0, shadowOpacity / shadowDepth));
         for (int i = shadowDepth; i >= 0; i--) {
             graphics2D.fillRoundRect(x - i, y - i, w + i * 2, h + i * 2,
@@ -144,13 +187,13 @@ public class Card extends RootObject {
     public void setX(int x) {
         this.x = x;
         cardPreview = new CardPreview(this);
-        backTerroText.setX(x + Positioning.center(WIDTH, backTerroText.getWidth()));
+        adjustTextXPosition();
     }
 
     public void setY(int y) {
         this.y = y;
         cardPreview = new CardPreview(this);
-        backTerroText.setY(y + Positioning.center(HEIGHT, backTerroText.getHeight()) + backTerroText.getHeight() - 10);
+        adjustTextYPosition();
     }
 
     public int getX() {
@@ -161,19 +204,7 @@ public class Card extends RootObject {
         return y;
     }
 
-    public int getWidth() {
-        return WIDTH;
-    }
-
     public Type getType() {
         return type;
-    }
-
-    public void setBack(boolean back) {
-        this.back = back;
-    }
-
-    public int getHEIGHT() {
-        return HEIGHT;
     }
 }
