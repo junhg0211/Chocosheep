@@ -23,8 +23,7 @@ public class MoneyCard extends RootObject {
     private void init() {
         backTerroText = new Text(0, 0, "T", new TextFormat(Const.FONT_PATH, WIDTH / 2f, Const.WHITE));
 
-        backTerroText.setX(x + Positioning.center(WIDTH, backTerroText.getWidth()));
-        backTerroText.setY(y + Positioning.center(HEIGHT, backTerroText.getHeight()) + backTerroText.getHeight() - 10);
+        windowResize();
     }
 
     @Override
@@ -41,6 +40,12 @@ public class MoneyCard extends RootObject {
                 y + Positioning.center(HEIGHT, WIDTH - BORDER_WIDTH * 2), WIDTH - BORDER_WIDTH * 2,
                 WIDTH - BORDER_WIDTH * 2);
         backTerroText.render(graphics);
+    }
+
+    @Override
+    public void windowResize() {
+        backTerroText.setX(x + Positioning.center(WIDTH, backTerroText.getWidth()));
+        backTerroText.setY(y + Positioning.center(HEIGHT, backTerroText.getHeight()) + backTerroText.getHeight() - 10);
     }
 
     public void setX(int x) {

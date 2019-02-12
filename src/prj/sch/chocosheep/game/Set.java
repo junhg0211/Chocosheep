@@ -10,6 +10,7 @@ import prj.sch.chocosheep.rootobject.Text;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 public class Set {
     public static int[] KAO = {0, 2, 3, 4};
@@ -44,10 +45,10 @@ public class Set {
     private void init() {
         cards = new ArrayList<>();
 
-        readjustY();
-
         TextFormat textFormat = new TextFormat(Const.FONT_PATH, 18, Const.WHITE);
         countText = new Text(0, display.getHeight() - 320, "" + count, textFormat);
+
+        readjustY();
     }
 
     private static int[] getListByType(Card.Type type) {
@@ -125,10 +126,12 @@ public class Set {
         int x = display.getWidth() / 2 - (setNumber + 1) * (Card.WIDTH + 10);
         countText.setX(x + Positioning.center(Card.WIDTH, countText.getWidth()));
         countText.render(graphics);
-        for (Card card : cards) {
-            card.setX(x);
-            card.render(graphics);
-        }
+        try {
+            for (Card card : cards) {
+                card.setX(x);
+                card.render(graphics);
+            }
+        } catch (ConcurrentModificationException ignored) {}
     }
 
     public void addCard() {
@@ -137,13 +140,14 @@ public class Set {
         countText.setText("" + count);
     }
 
-    private void readjustY() {
+    public void readjustY() {
         cards.clear();
         for (int i = count - 1; i >= 0; i--) {
             Card card = new Card(type, mouseManager, display);
             card.setY(display.getHeight() - 300 + i * 30);
             cards.add(card);
         }
+        countText.setY(display.getHeight() - 320);
     }
 
     public Card.Type getType() {

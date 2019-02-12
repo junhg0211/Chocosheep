@@ -56,6 +56,9 @@ public class SinglePlay extends State {
 
         settingWindow = new SettingWindow(display, keyManager);
 
+        having = new ArrayList<>();
+        sets = new ArrayList<>();
+
         moneyCard = new MoneyCard(display.getWidth() - 400, 0);
         moneyCard.setY(display.getHeight() - Card.HEIGHT - 150);
 
@@ -72,6 +75,8 @@ public class SinglePlay extends State {
         money = 0;
         setLimit = 2;
         leaveCards = Card.getRandomizedDeck(mouseManager, display);
+        having = new ArrayList<>();
+        leaveRounds--;
     }
 
     @Override
@@ -80,21 +85,23 @@ public class SinglePlay extends State {
             settingWindow.tick();
 
             if (keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
-                leaveRounds = settingWindow.getRounds();
-                orderNeedToBeSorted = settingWindow.isOrderNeedToBeSorted();
                 situation = Situation.PLAYING;
 
-                having = new ArrayList<>();
-                sets = new ArrayList<>();
+                leaveRounds = settingWindow.getRounds();
+                orderNeedToBeSorted = settingWindow.isOrderNeedToBeSorted();
 
                 resetGame();
             }
         } else if (situation == Situation.PLAYING) {
             if (having.size() == 0) {
-                if (leaveRounds > 0) {
+                if (leaveCards.size() > 0) {
                     share();
                 } else {
-                    situation = Situation.RESULT;
+                    if (leaveRounds > 0) {
+                        resetGame();
+                    } else {
+                        situation = Situation.RESULT;
+                    }
                 }
             } else {
                 try {
@@ -167,6 +174,8 @@ public class SinglePlay extends State {
                 set.tick();
             for (int i = having.size() - 1; i >= 0; i--)
                 having.get(i).tick();
+
+            System.out.println(leaveRounds);
         }
     }
 
@@ -260,5 +269,9 @@ public class SinglePlay extends State {
         tablecloth.windowResize();
         settingWindow.windowResize();
         readjustLeaveCardText();
+        moneyCard.windowResize();
+        for (Set set : sets) {
+            set.readjustY();
+        }
     }
 }
