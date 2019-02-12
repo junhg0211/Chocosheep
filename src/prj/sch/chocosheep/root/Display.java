@@ -16,16 +16,18 @@ public class Display {
     private double fps, displayFps;
     private MouseManager mouseManager;
     private KeyManager keyManager;
+    private Root root;
 
     private Canvas canvas;
 
-    Display(int width, int height, String title, double fps, MouseManager mouseManager, KeyManager keyManager) {
+    Display(int width, int height, String title, double fps, MouseManager mouseManager, KeyManager keyManager, Root root) {
         this.width = width;
         this.height = height;
         this.title = title;
         this.fps = fps;
         this.mouseManager = mouseManager;
         this.keyManager = keyManager;
+        this.root = root;
 
         init();
     }
@@ -42,9 +44,7 @@ public class Display {
                 width = component.getWidth() - 16;
                 height = component.getHeight() - 39;
                 try {
-                    for (RootObject object : RootObject.objects) {
-                        object.windowResize();
-                    }
+                    root.windowResize();
                 } catch (ConcurrentModificationException ignored) {}
             }
         });

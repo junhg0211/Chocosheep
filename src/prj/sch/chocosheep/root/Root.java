@@ -30,13 +30,22 @@ public class Root implements Runnable {
     private void init() {
         mouseManager = new MouseManager();
         keyManager = new KeyManager();
-        display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyManager);
+        display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyManager, this);
 
         state = new Lobby(this, mouseManager, keyManager, display);
         hud = new HUD(this, new TextFormat(Const.FONT_PATH, 12, Const.BLACK));
 
         thread = new Thread(this);
         running = false;
+    }
+
+    void windowResize() {
+        for (RootObject object : RootObject.objects) {
+            object.windowResize();
+        }
+        try {
+            state.windowResize();
+        } catch (NullPointerException ignored) {}
     }
 
     private void tick() {
@@ -76,7 +85,7 @@ public class Root implements Runnable {
         graphics.dispose();
     }
 
-//    @Override
+    @Override
     public void run() {
         double timePerLoop = 1000000000 / display.getFps();
         double delta = 0;

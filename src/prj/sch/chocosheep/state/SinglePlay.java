@@ -83,8 +83,6 @@ class SinglePlay extends State {
                 money = 0;
             }
         } else if (situation == Situation.PLAYING) {
-            System.out.println(leaveCards.size());
-
             for (Set set : sets) {
                 set.tick();
             }
@@ -123,6 +121,7 @@ class SinglePlay extends State {
                                     Positioning.center(Card.WIDTH, moneyCardText.getWidth()));
                             moneyCardText.setText("" + this.money);
                             sets.get(setNumber).removeCardByMoney(money);
+                            System.out.println(money);
                             if (sets.get(setNumber).getCount() == 0) {
                                 sets.remove(setNumber);
                             }
@@ -206,5 +205,11 @@ class SinglePlay extends State {
                 moneyCardText.render(graphics);
             }
         }
+    }
+
+    @Override
+    public void windowResize() {
+        tablecloth.windowResize();
+        settingWindow.windowResize();
     }
 }

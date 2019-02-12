@@ -136,6 +136,24 @@ public class SettingWindow extends RootObject {
         tradeLimitText.render(graphics);
     }
 
+    @Override
+    public void windowResize() {
+        texts = new ArrayList<>();
+
+        texts.add(new Text(100, (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "라운드 수",
+                indexNameTextFormat));
+        texts.add(new Text(200 + texts.get(0).getWidth(),
+                (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "카드 순서 경찰", indexNameTextFormat));
+        texts.add(new Text(300 + texts.get(0).getWidth() + texts.get(1).getWidth(),
+                (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "거래 제한", indexNameTextFormat));
+
+        roundsText = new Text(100, display.getHeight() - 100, "" + rounds, valueTextFormat);
+        sortedOrderText = new Text(200 + texts.get(0).getWidth(), display.getHeight() - 100, "O",
+                valueTextFormat);
+        tradeLimitText = new Text(300 + texts.get(0).getWidth() + texts.get(1).getWidth(),
+                display.getHeight() - 100, "" + tradeLimit, valueTextFormat);
+    }
+
     public int getRounds() {
         return rounds;
     }

@@ -8,7 +8,6 @@ import prj.sch.chocosheep.root.Display;
 import prj.sch.chocosheep.rootobject.Card;
 import prj.sch.chocosheep.rootobject.Text;
 
-import javax.swing.text.Position;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -87,10 +86,19 @@ public class Set {
             return 0;
         }
 
-        if (list[3] >= money) return 4;
-        else if (list[2] >= money) return 3;
-        else if (list[1] >= money) return 2;
-        else if (list[0] >= money) return 1;
+        if (type == Card.Type.KAO) {
+            if (list[3] >= money) return 4;
+            else if (list[2] >= money) return 3;
+            else if (list[1] >= money) return 2;
+        } else if (type == Card.Type.GARTAR) {
+            if (list[2] >= money) return 3;
+            else if (list[1] >= money) return 2;
+        } else {
+            if (list[3] >= money) return 4;
+            else if (list[2] >= money) return 3;
+            else if (list[1] >= money) return 2;
+            else if (list[0] >= money) return 1;
+        }
 
         return 0;
     }

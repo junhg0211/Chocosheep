@@ -1,6 +1,5 @@
 package prj.sch.chocosheep.state;
 
-import prj.sch.chocosheep.root.Root;
 import prj.sch.chocosheep.rootobject.RootObject;
 
 import java.awt.*;
@@ -20,4 +19,6 @@ public class State {
             object.render(graphics);
         }
     }
+
+    public void windowResize() {}
 }
