@@ -16,7 +16,7 @@ public class Lobby extends State {
     private KeyManager keyManager;
     private Display display;
 
-    private Clickarea toGame;
+    private Clickarea toSinglePlay, toMultiPlay;
 
     public Lobby(Root root, MouseManager mouseManager, KeyManager keyManager, Display display) {
         this.root = root;
@@ -28,13 +28,16 @@ public class Lobby extends State {
     }
 
     private void init() {
-        toGame = new Clickarea(0, 0, display.getWidth() / 2, display.getHeight(), mouseManager);
+        toSinglePlay = new Clickarea(0, 0, display.getWidth() / 2, display.getHeight(), mouseManager);
+        toMultiPlay = new Clickarea(display.getWidth() / 2, 0, display.getWidth() / 2, display.getHeight(), mouseManager);
     }
 
     @Override
     public void tick() {
-        if (toGame.isClicked() || keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
+        if (toSinglePlay.isClicked() || keyManager.getStartKeys()[KeyEvent.VK_S]) {
             root.setState(new SinglePlay(display, keyManager, mouseManager));
+        } else if (toMultiPlay.isClicked() || keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
+            root.setState(new MultiPlay());
         }
     }
 
@@ -48,7 +51,7 @@ public class Lobby extends State {
 
     @Override
     public void windowResize() {
-        toGame.setWidth(display.getWidth() / 2);
-        toGame.setHeight(display.getHeight());
+        toSinglePlay.setWidth(display.getWidth() / 2);
+        toSinglePlay.setHeight(display.getHeight());
     }
 }

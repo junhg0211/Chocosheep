@@ -25,7 +25,8 @@ public class SinglePlay extends State {
 
     private SettingWindow settingWindow;
 
-    private int leaveRounds;
+    private int leftRounds;
+    private Text leftRoundsText;
     private boolean orderNeedToBeSorted;
 
     private ArrayList<Card> leaveCards;
@@ -40,6 +41,8 @@ public class SinglePlay extends State {
 
     private MoneyCard moneyCard;
     private Text moneyCardText;
+
+    private int totalMoney;
 
     SinglePlay(Display display, KeyManager keyManager, MouseManager mouseManager) {
         this.display = display;
@@ -64,11 +67,24 @@ public class SinglePlay extends State {
 
         moneyCardText = new Text(0, display.getHeight() - 320, "", new TextFormat(Const.FONT_PATH, 18, Const.WHITE));
 
+        leftRoundsText = new Text(0, 200, "", new TextFormat(Const.FONT_PATH, 72, Const.WHITE));
+
         leaveCard = new MoneyCard(0, 0);
         leaveCardCount = new Text(0, 0, "", new TextFormat(Const.FONT_PATH, 72, Const.WHITE));
         readjustLeaveCardText();
 
         selectedCardIndex = 0;
+
+        totalMoney = 0;
+    }
+
+    private int calculateMoney(ArrayList<Set> sets) {
+        int size = sets.size();
+        return size * (size + 1) / 2 - size - 1;
+    }
+
+    private int calculateMoney(ArrayList<Set> sets, int money) {
+        return calculateMoney(sets) + money;
     }
 
     private void resetGame() {
@@ -76,107 +92,10 @@ public class SinglePlay extends State {
         setLimit = 2;
         leaveCards = Card.getRandomizedDeck(mouseManager, display);
         having = new ArrayList<>();
-        leaveRounds--;
-    }
-
-    @Override
-    public void tick() {
-        if (situation == Situation.SETTING) {
-            settingWindow.tick();
-
-            if (keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
-                situation = Situation.PLAYING;
-
-                leaveRounds = settingWindow.getRounds();
-                orderNeedToBeSorted = settingWindow.isOrderNeedToBeSorted();
-
-                resetGame();
-            }
-        } else if (situation == Situation.PLAYING) {
-            if (having.size() == 0) {
-                if (leaveCards.size() > 0) {
-                    share();
-                } else {
-                    if (leaveRounds > 0) {
-                        resetGame();
-                    } else {
-                        situation = Situation.RESULT;
-                    }
-                }
-            } else {
-                try {
-                    selectedCard = having.get(selectedCardIndex);
-                } catch (IndexOutOfBoundsException e) {
-                    selectedCardIndex = having.size() - 1;
-                    selectedCard = having.get(selectedCardIndex);
-                }
-                boolean[] startKeys = keyManager.getStartKeys();
-
-                if (startKeys[KeyEvent.VK_Z]) {  // 스택
-                    try {
-                        Set set = getSetByType(selectedCard.getType());
-                        having.remove(selectedCard);
-                        set.addCard();
-                    } catch (ArrayIndexOutOfBoundsException ignored) {
-                        if (sets.size() < setLimit) {
-                            sets.add(new Set(selectedCard.getType(), 1, display, mouseManager));
-                            having.remove(selectedCard);
-                        }
-                    }
-                } else if (startKeys[KeyEvent.VK_X]) {  // 스루
-                    having.remove(selectedCard);
-                } else if (getSecondKeyboardLineToInteger(startKeys) >= 0) {  // 교환
-                    int setNumber = setLimit - 1 - getSecondKeyboardLineToInteger(startKeys);
-
-                    if (sets.size() >= setNumber + 1 && setNumber >= 0) {
-                        int money = sets.get(setNumber).toMoney();
-                        if (money > 0) {
-                            this.money += money;
-                            moneyCardText.setX(moneyCard.getX() +
-                                    Positioning.center(Card.WIDTH, moneyCardText.getWidth()));
-                            moneyCardText.setText("" + this.money);
-                            sets.get(setNumber).removeCardByMoney(money);
-                            if (sets.get(setNumber).getCount() == 0) {
-                                sets.remove(setNumber);
-                            }
-                        }
-                    }
-                } else if (getThirdKeyboardLineToInteger(startKeys) >= 0) { // 버림
-                    int setNumber = setLimit - 1 - getThirdKeyboardLineToInteger(startKeys);
-
-                    if (sets.size() >= setNumber + 1 && setNumber >= 0) {
-                        sets.remove(setNumber);
-                    }
-                } else if (startKeys[KeyEvent.VK_SHIFT]) {  // 세트 리밋 구매
-                    if (setLimit + 1 <= money) {
-                        setLimit++;
-                        money -= setLimit;
-                        moneyCardText.setText("" + money);
-                    }
-                } else if (startKeys[KeyEvent.VK_C]) {  // 카드 선택 변경 (왼쪽)
-                    if (!orderNeedToBeSorted) {
-                        selectedCardIndex--;
-                        if (selectedCardIndex < 0) {
-                            selectedCardIndex = 0;
-                        }
-                    }
-                } else if (startKeys[KeyEvent.VK_V]) {  // 카드 선택 변경 (오른쪽)
-                    if (!orderNeedToBeSorted) {
-                        selectedCardIndex++;
-                        if (selectedCardIndex > having.size() - 1) {
-                            selectedCardIndex = having.size() - 1;
-                        }
-                    }
-                }
-            }
-
-            for (Set set : sets)
-                set.tick();
-            for (int i = having.size() - 1; i >= 0; i--)
-                having.get(i).tick();
-
-            System.out.println(leaveRounds);
-        }
+        sets = new ArrayList<>();
+        leftRounds--;
+        leftRoundsText.setText(leftRounds + " Left Rounds");
+        leftRoundsText.setX(Positioning.center(display.getWidth(), leftRoundsText.getWidth()));
     }
 
     private int getSecondKeyboardLineToInteger(boolean[] keys) {
@@ -222,6 +141,119 @@ public class SinglePlay extends State {
         readjustLeaveCardText();
     }
 
+    private void readjustLeaveCardText() {
+        leaveCard.setX(Positioning.center(display.getWidth(), Card.WIDTH + 40 + leaveCardCount.getWidth()));
+        leaveCard.setY(Positioning.center(display.getHeight(), Card.HEIGHT));
+        leaveCardCount.setX(display.getWidth() -
+                Positioning.center(display.getWidth(), Card.WIDTH + 40 + leaveCardCount.getWidth()) - leaveCardCount.getWidth());
+        leaveCardCount.setY((int) (Positioning.center(display.getHeight(), leaveCardCount.getHeight()) +
+                        leaveCardCount.getTextFormat().getSize() * 0.75));
+    }
+
+    @Override
+    public void tick() {
+        if (situation == Situation.SETTING) {
+            settingWindow.tick();
+
+            if (keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
+                situation = Situation.PLAYING;
+
+                leftRounds = settingWindow.getRounds();
+                orderNeedToBeSorted = settingWindow.isOrderNeedToBeSorted();
+
+                resetGame();
+            }
+        } else if (situation == Situation.PLAYING) {
+            boolean[] startKeys = keyManager.getStartKeys();
+
+            if (getSecondKeyboardLineToInteger(startKeys) >= 0) {  // 교환
+                int setNumber = setLimit - 1 - getSecondKeyboardLineToInteger(startKeys);
+
+                if (sets.size() >= setNumber + 1 && setNumber >= 0) {
+                    int money = sets.get(setNumber).toMoney();
+                    if (money > 0) {
+                        this.money += money;
+                        moneyCardText.setX(moneyCard.getX() +
+                                Positioning.center(Card.WIDTH, moneyCardText.getWidth()));
+                        moneyCardText.setText("" + this.money);
+                        sets.get(setNumber).removeCardByMoney(money);
+                        if (sets.get(setNumber).getCount() == 0) {
+                            sets.remove(setNumber);
+                        }
+                    }
+                }
+            } else if (getThirdKeyboardLineToInteger(startKeys) >= 0) { // 버림
+                int setNumber = setLimit - 1 - getThirdKeyboardLineToInteger(startKeys);
+
+                if (sets.size() >= setNumber + 1 && setNumber >= 0) {
+                    sets.remove(setNumber);
+                }
+            }
+
+            if (having.size() == 0) {
+                if (leaveCards.size() > 0) {
+                    share();
+                } else if (sets.isEmpty()) {
+                    totalMoney += calculateMoney(sets, money);
+                    if (leftRounds > 0) {
+                        resetGame();
+                    } else {
+                        situation = Situation.RESULT;
+                    }
+                }
+            } else {
+                try {
+                    selectedCard = having.get(selectedCardIndex);
+                } catch (IndexOutOfBoundsException e) {
+                    selectedCardIndex = having.size() - 1;
+                    selectedCard = having.get(selectedCardIndex);
+                }
+
+                if (startKeys[KeyEvent.VK_Z]) {  // 스택
+                    try {
+                        Set set = getSetByType(selectedCard.getType());
+                        having.remove(selectedCard);
+                        set.addCard();
+                    } catch (ArrayIndexOutOfBoundsException ignored) {
+                        if (sets.size() < setLimit) {
+                            sets.add(new Set(selectedCard.getType(), 1, display, mouseManager));
+                            having.remove(selectedCard);
+                        }
+                    }
+                } else if (startKeys[KeyEvent.VK_X]) {  // 스루
+                    having.remove(selectedCard);
+                } else if (startKeys[KeyEvent.VK_SHIFT]) {  // 세트 리밋 구매
+                    if (setLimit + 1 <= money) {
+                        setLimit++;
+                        money -= setLimit;
+                        moneyCardText.setText("" + money);
+                    }
+                } else if (startKeys[KeyEvent.VK_C]) {  // 카드 선택 변경 (왼쪽)
+                    if (!orderNeedToBeSorted) {
+                        selectedCardIndex--;
+                        if (selectedCardIndex < 0) {
+                            selectedCardIndex = 0;
+                        }
+                    }
+                } else if (startKeys[KeyEvent.VK_V]) {  // 카드 선택 변경 (오른쪽)
+                    if (!orderNeedToBeSorted) {
+                        selectedCardIndex++;
+                        if (selectedCardIndex > having.size() - 1) {
+                            selectedCardIndex = having.size() - 1;
+                        }
+                    }
+                }
+            }
+
+            for (Set set : sets)
+                set.tick();
+            for (int i = having.size() - 1; i >= 0; i--)
+                having.get(i).tick();
+        } else if (situation == Situation.RESULT) {
+            System.out.println(totalMoney);
+        }
+    }
+
     @Override
     public void render(Graphics graphics) {
         tablecloth.render(graphics);
@@ -245,6 +277,8 @@ public class SinglePlay extends State {
                 sets.get(i).render(graphics, i);
             }
 
+            leftRoundsText.render(graphics);
+
             leaveCard.render(graphics);
             leaveCardCount.render(graphics);
 
@@ -253,15 +287,6 @@ public class SinglePlay extends State {
                 moneyCardText.render(graphics);
             }
         }
-    }
-
-    private void readjustLeaveCardText() {
-        leaveCard.setX(Positioning.center(display.getWidth(), Card.WIDTH + 40 + leaveCardCount.getWidth()));
-        leaveCard.setY(Positioning.center(display.getHeight(), Card.HEIGHT));
-        leaveCardCount.setX(display.getWidth() -
-                Positioning.center(display.getWidth(), Card.WIDTH + 40 + leaveCardCount.getWidth()) - leaveCardCount.getWidth());
-        leaveCardCount.setY((int) (Positioning.center(display.getHeight(), leaveCardCount.getHeight()) +
-                        leaveCardCount.getTextFormat().getSize() * 0.75));
     }
 
     @Override
