@@ -56,6 +56,7 @@ public class Root implements Runnable {
 
         state.tick();
 
+        RootObject.sumAddQueue();
         for (RootObject object : RootObject.objects) {
             object.tick();
         }

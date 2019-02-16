@@ -7,6 +7,7 @@ import prj.sch.chocosheep.game.Set;
 import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
+import prj.sch.chocosheep.root.Root;
 import prj.sch.chocosheep.rootobject.*;
 
 import java.awt.*;
@@ -14,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 public class SinglePlay extends State {
+    private Root root;
     private Display display;
     private KeyManager keyManager;
     private MouseManager mouseManager;
@@ -43,8 +45,11 @@ public class SinglePlay extends State {
     private Text moneyCardText;
 
     private int totalMoney;
+    private Text resultText;
+    private Clickarea clickarea;
 
-    SinglePlay(Display display, KeyManager keyManager, MouseManager mouseManager) {
+    SinglePlay(Root root, Display display, KeyManager keyManager, MouseManager mouseManager) {
+        this.root = root;
         this.display = display;
         this.keyManager = keyManager;
         this.mouseManager = mouseManager;
@@ -76,6 +81,8 @@ public class SinglePlay extends State {
         selectedCardIndex = 0;
 
         totalMoney = 0;
+        resultText = new Text(0, 0, "", new TextFormat(Const.FONT_PATH, 72, Const.WHITE));
+        clickarea = new Clickarea(0, 0, display.getWidth(), display.getHeight(), mouseManager);
     }
 
     private int calculateMoney(ArrayList<Set> sets) {
@@ -199,6 +206,9 @@ public class SinglePlay extends State {
                         resetGame();
                     } else {
                         situation = Situation.RESULT;
+                        resultText.setText(String.format("A8D3S E8S : /%d*D21S", totalMoney));
+                        resultText.setX(Positioning.center(display.getWidth(), resultText.getWidth()));
+                        resultText.setY(Positioning.center(display.getHeight(), resultText.getHeight()));
                     }
                 }
             } else {
@@ -250,7 +260,9 @@ public class SinglePlay extends State {
             for (int i = having.size() - 1; i >= 0; i--)
                 having.get(i).tick();
         } else if (situation == Situation.RESULT) {
-            System.out.println(totalMoney);
+            if (clickarea.isClicked()) {
+                root.setState(new Lobby(root, mouseManager, keyManager, display));
+            }
         }
     }
 
@@ -286,6 +298,8 @@ public class SinglePlay extends State {
                 moneyCard.render(graphics);
                 moneyCardText.render(graphics);
             }
+        } else if (situation == Situation.RESULT) {
+            resultText.render(graphics);
         }
     }
 

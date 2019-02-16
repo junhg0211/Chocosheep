@@ -9,7 +9,7 @@ public class HUD extends RootObject {
     private Root root;
     private TextFormat textFormat;
 
-    private Text state, fps, cursor, objectCount;
+    private Text state, fps, cursor, objectCount, previewCard;
 
     public HUD(Root root, TextFormat textFormat) {
         this.root = root;
@@ -23,6 +23,7 @@ public class HUD extends RootObject {
         fps = new Text(0, (int) (textFormat.getSize() * 2), "", textFormat);
         cursor = new Text(0, (int) (textFormat.getSize() * 3), "", textFormat);
         objectCount = new Text(0, (int) (textFormat.getSize() * 4), "", textFormat);
+        previewCard = new Text(0, (int) (textFormat.getSize() * 5), "", textFormat);
     }
 
     @Override
@@ -31,6 +32,11 @@ public class HUD extends RootObject {
         fps.setText((int) root.getDisplay().getDisplayFps() + " fps");
         cursor.setText("c " + root.getMouseManager().getX() + " " + root.getMouseManager().getY());
         objectCount.setText("o " + RootObject.objects.size());
+        if (Card.previewing != null) {
+            previewCard.setText("p " + Card.previewing + " " + Card.previewing.getType() + " " + Card.previewing.isPreviewing());
+        } else {
+            previewCard.setText("p " + null);
+        }
     }
 
     @Override
@@ -39,5 +45,6 @@ public class HUD extends RootObject {
         fps.render(graphics);
         cursor.render(graphics);
         objectCount.render(graphics);
+        previewCard.render(graphics);
     }
 }

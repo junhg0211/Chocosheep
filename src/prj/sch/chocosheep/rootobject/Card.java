@@ -5,8 +5,6 @@ import prj.sch.chocosheep.TextFormat;
 import prj.sch.chocosheep.game.Set;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Display;
-import prj.sch.chocosheep.root.Root;
-import prj.sch.chocosheep.state.SinglePlay;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -189,7 +187,7 @@ public class Card extends RootObject {
         return this.x < x && x < this.x + WIDTH && this.y < y && y < this.y + HEIGHT;
     }
 
-    private boolean isPreviewing() {
+    boolean isPreviewing() {
         return previousPreviewing == this && isUnderCursor();
     }
 
