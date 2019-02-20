@@ -85,13 +85,8 @@ public class SinglePlay extends State {
         clickarea = new Clickarea(0, 0, display.getWidth(), display.getHeight(), mouseManager);
     }
 
-    private int calculateMoney(ArrayList<Set> sets) {
-        int size = sets.size();
-        return size * (size + 1) / 2 - size - 1;
-    }
-
-    private int calculateMoney(ArrayList<Set> sets, int money) {
-        return calculateMoney(sets) + money;
+    private int calculateMoney() {
+        return (setLimit - 2) * (setLimit + 1 ) / 2 + money;
     }
 
     private void resetGame() {
@@ -201,12 +196,12 @@ public class SinglePlay extends State {
                 if (leaveCards.size() > 0) {
                     share();
                 } else if (sets.isEmpty()) {
-                    totalMoney += calculateMoney(sets, money);
+                    totalMoney += calculateMoney();
                     if (leftRounds > 0) {
                         resetGame();
                     } else {
                         situation = Situation.RESULT;
-                        resultText.setText(String.format("A8D3S E8S : /%d*D21S", totalMoney));
+                        resultText.setText(String.format("A8D3S E8S : %d", totalMoney));
                         resultText.setX(Positioning.center(display.getWidth(), resultText.getWidth()));
                         resultText.setY(Positioning.center(display.getHeight(), resultText.getHeight()));
                     }
