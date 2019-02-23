@@ -164,6 +164,8 @@ public class SinglePlay extends State {
                 orderNeedToBeSorted = settingWindow.isOrderNeedToBeSorted();
 
                 resetGame();
+            } else if (keyManager.getStartKeys()[KeyEvent.VK_ESCAPE]) {
+                root.setState(new Lobby(root, mouseManager, keyManager, display));
             }
         } else if (situation == Situation.PLAYING) {
             boolean[] startKeys = keyManager.getStartKeys();

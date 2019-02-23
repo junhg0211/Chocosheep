@@ -2,9 +2,13 @@ package prj.sch.chocosheep.rootobject;
 
 import prj.sch.chocosheep.input.MouseManager;
 
+import java.awt.*;
+
 public class Clickarea extends RootObject {
     private int x, y, width, height;
     private MouseManager mouseManager;
+
+    private XBox xBox;
 
     public Clickarea(int x, int y, int width, int height, MouseManager mouseManager) {
         this.x = x;
@@ -12,14 +16,25 @@ public class Clickarea extends RootObject {
         this.width = width;
         this.height = height;
         this.mouseManager = mouseManager;
+
+        init();
+    }
+
+    private void init() {
+        xBox = new XBox(x, y, width, height);
     }
 
     public boolean isClicked() {
+        int mouseX = mouseManager.getX(), mouseY = mouseManager.getY();
+        int startX = mouseManager.getClickStartX(), startY = mouseManager.getClickStartY();
         return mouseManager.getLeftEndClick()
-                && x < mouseManager.getX() && mouseManager.getX() < x + width
-                && y < mouseManager.getY() && mouseManager.getY() < y + height
-                && x < mouseManager.getClickStartX() && mouseManager.getClickStartX() < x + width
-                && y < mouseManager.getClickStartY() && mouseManager.getClickStartY() < y + height;
+                && x < mouseX && mouseX < x + width && y < mouseY && mouseY < y + height
+                && x < startX && startX < x + width && y < startY && startY < y + height;
+    }
+
+    @Override
+    public void render(Graphics graphics) {
+        xBox.render(graphics);
     }
 
     public void setWidth(int width) {

@@ -4,6 +4,8 @@ import javax.swing.event.MouseInputListener;
 import java.awt.event.MouseEvent;
 
 public class MouseManager implements MouseInputListener {
+    private final int KEY_COUNT = 3;
+
     private int x, y;
     private boolean[] click, previousClick, startClick, endClick;
     private int clickStartX, clickStartY;
@@ -13,10 +15,10 @@ public class MouseManager implements MouseInputListener {
     }
 
     private void init() {
-        click = new boolean[3];
-        previousClick = new boolean[3];
-        startClick = new boolean[3];
-        endClick = new boolean[3];
+        click = new boolean[KEY_COUNT];
+        previousClick = new boolean[KEY_COUNT];
+        startClick = new boolean[KEY_COUNT];
+        endClick = new boolean[KEY_COUNT];
     }
 
     public void tick() {

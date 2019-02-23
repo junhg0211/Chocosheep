@@ -5,6 +5,10 @@ public class Positioning {
         return (a - b) / 2;
     }
 
+    public static float center(float a, float b) {
+        return (a - b) / 2;
+    }
+
     public static int range(int value, int min, int max) {
         if (value <= min) {
             return min;

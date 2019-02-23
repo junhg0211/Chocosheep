@@ -15,7 +15,7 @@ public class Lobby extends State {
     private KeyManager keyManager;
     private Display display;
 
-    private Clickarea toSinglePlay, toMultiPlay;
+    private Clickarea toSinglePlay, toMultiPlay, toSetting;
 
     public Lobby(Root root, MouseManager mouseManager, KeyManager keyManager, Display display) {
         this.root = root;
@@ -27,8 +27,9 @@ public class Lobby extends State {
     }
 
     private void init() {
-        toSinglePlay = new Clickarea(0, 100, display.getWidth() / 2, display.getHeight(), mouseManager);
-        toMultiPlay = new Clickarea(display.getWidth() / 2, 100, display.getWidth() / 2, display.getHeight(), mouseManager);
+        toSinglePlay = new Clickarea(0, 0, display.getWidth() / 2, display.getHeight() / 2, mouseManager);
+        toMultiPlay = new Clickarea(display.getWidth() / 2, 0, display.getWidth() / 2, display.getHeight() / 2, mouseManager);
+        toSetting = new Clickarea(0, display.getHeight() / 2, display.getWidth() / 2, display.getHeight() / 2, mouseManager);
     }
 
     @Override
@@ -36,13 +37,21 @@ public class Lobby extends State {
         if (toSinglePlay.isClicked()) {
             root.setState(new SinglePlay(root, display, keyManager, mouseManager));
         } else if (toMultiPlay.isClicked()) {
-            root.setState(new MultiPlay());
+            try {
+                root.setState(new MultiPlay(root, keyManager, root.getDisplay()));
+            } catch (Exception ignored) {}
+        } else if (toSetting.isClicked()) {
+            root.setState(new Setting(root, keyManager));
         }
     }
 
     @Override
     public void render(Graphics graphics) {
         Graphics2D graphics2D = (Graphics2D) graphics;
+
+        toSinglePlay.render(graphics);
+        toMultiPlay.render(graphics);
+        toSetting.render(graphics);
 
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2D.setColor(Const.BLACK);
