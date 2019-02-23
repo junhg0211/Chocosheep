@@ -37,7 +37,7 @@ class ServerThread extends Thread {
         while (start.isRunning()) {
             String message;
             try {
-                message = scanner.nextLine();
+                message = recv();
             } catch (NoSuchElementException e) {
                 break;
             }
@@ -93,7 +93,14 @@ class ServerThread extends Thread {
         disconnected();
     }
 
+    private String recv() {
+        String message = scanner.nextLine();
+        System.out.println(socket.getInetAddress() + " -> " + message);
+        return message;
+    }
+
     private void send(String message) {
+        System.out.println(socket.getInetAddress() + " <- " + message);
         printStream.println(message);
     }
 

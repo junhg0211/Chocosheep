@@ -9,12 +9,10 @@ import prj.sch.chocosheep.rootobject.Card;
 import prj.sch.chocosheep.rootobject.HUD;
 import prj.sch.chocosheep.rootobject.RootObject;
 import prj.sch.chocosheep.state.Lobby;
-import prj.sch.chocosheep.state.ServerNotConnected;
 import prj.sch.chocosheep.state.State;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.io.IOException;
 
 public class Root implements Runnable {
     private MouseManager mouseManager;
@@ -42,11 +40,7 @@ public class Root implements Runnable {
         thread = new Thread(this);
         running = false;
 
-        try {
-            client = new Client("shtelo.kro.kr", 31685);
-        } catch (IOException e) {
-            state = new ServerNotConnected(display);
-        }
+        client = null;
     }
 
     void windowResize() {
@@ -152,5 +146,9 @@ public class Root implements Runnable {
 
     public MouseManager getMouseManager() {
         return mouseManager;
+    }
+
+    public Client getClient() {
+        return client;
     }
 }

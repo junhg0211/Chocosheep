@@ -9,7 +9,6 @@ public class Client {
     private String host;
     private int port;
 
-    private Socket socket;
     private boolean connected;
     private PrintStream printStream;
     private Scanner scanner;
@@ -23,7 +22,7 @@ public class Client {
     }
 
     private void init() throws IOException {
-        socket = new Socket(host, port);
+        Socket socket = new Socket(host, port);
 
         connected = true;
 
@@ -41,11 +40,11 @@ public class Client {
         printStream.println(message);
     }
 
-    public String recv() {
+    String recv() {
         return scanner.nextLine();
     }
 
-    public boolean isConnected() {
+    boolean isConnected() {
         return connected;
     }
 }

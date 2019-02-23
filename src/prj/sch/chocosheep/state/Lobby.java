@@ -8,7 +8,6 @@ import prj.sch.chocosheep.root.Root;
 import prj.sch.chocosheep.rootobject.Clickarea;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 public class Lobby extends State {
     private Root root;
@@ -28,15 +27,15 @@ public class Lobby extends State {
     }
 
     private void init() {
-        toSinglePlay = new Clickarea(0, 0, display.getWidth() / 2, display.getHeight(), mouseManager);
-        toMultiPlay = new Clickarea(display.getWidth() / 2, 0, display.getWidth() / 2, display.getHeight(), mouseManager);
+        toSinglePlay = new Clickarea(0, 100, display.getWidth() / 2, display.getHeight(), mouseManager);
+        toMultiPlay = new Clickarea(display.getWidth() / 2, 100, display.getWidth() / 2, display.getHeight(), mouseManager);
     }
 
     @Override
     public void tick() {
-        if (toSinglePlay.isClicked() || keyManager.getStartKeys()[KeyEvent.VK_S]) {
+        if (toSinglePlay.isClicked()) {
             root.setState(new SinglePlay(root, display, keyManager, mouseManager));
-        } else if (toMultiPlay.isClicked() || keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
+        } else if (toMultiPlay.isClicked()) {
             root.setState(new MultiPlay());
         }
     }
