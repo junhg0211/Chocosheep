@@ -37,11 +37,27 @@ public class Clickarea extends RootObject {
         xBox.render(graphics);
     }
 
+    @Override
+    public void windowResize() {
+        xBox.setX(x);
+        xBox.setY(y);
+        xBox.setWidth(width);
+        xBox.setHeight(height);
+    }
+
     public void setWidth(int width) {
         this.width = width;
     }
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }

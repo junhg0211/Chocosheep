@@ -41,14 +41,6 @@ public class TextFormat {
         return (int) font.getStringBounds(string, fontRenderContext).getHeight();
     }
 
-    public int[] stringBounds(String string) {
-        AffineTransform affineTransform = new AffineTransform();
-        FontRenderContext fontRenderContext = new FontRenderContext(affineTransform, true, true);
-        return new int[] {
-                (int) font.getStringBounds(string, fontRenderContext).getWidth(),
-                (int) font.getStringBounds(string, fontRenderContext).getHeight()};
-    }
-
     public Font getFont() {
         return font;
     }

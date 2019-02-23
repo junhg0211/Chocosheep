@@ -46,13 +46,13 @@ class ServerThread extends Thread {
             if (messages.length < 1) break;
 
             if (messages[0].equalsIgnoreCase("PING")) {
-                send("PONG");
+                send("PING PONG");
             } else if (messages[0].equalsIgnoreCase("LGIN")) {
                 if (messages.length == 1) {
                     if (account != null) {
-                        send(account.getId());
+                        send("LGIN " + account.getId());
                     } else {
-                        send("ERRR 0");
+                        send("LGIN ERRR 0");
                     }
                 } else if (messages.length == 3) {
                     if (account == null) {
@@ -61,12 +61,12 @@ class ServerThread extends Thread {
 
                         try {
                             account = new Account(id, password);
-                            send("PASS");
+                            send("LGIN PASS");
                         } catch (IOException e) {
-                            send("ERRR 0");
+                            send("LGIN ERRR 1");
                         }
                     } else {
-                        send("ERRR 1");
+                        send("LGIN ERRR 2");
                     }
                 }
             } else if (messages[0].equalsIgnoreCase("RGST")) {
@@ -75,18 +75,21 @@ class ServerThread extends Thread {
                     String password = messages[2];
                     try {
                         AccountFile.createNewFile(id, password);
-                        send("PASS");
+                        send("RGST PASS");
                     } catch (FileAlreadyExistsException e) {
-                        send("ERRR 0");
+                        send("RGST ERRR 0");
                     }
                 }
             } else if (messages[0].equalsIgnoreCase("LGOT")) {
                 if (account != null) {
                     account = null;
-                    send("PASS");
+                    send("LGOT PASS");
                 } else {
-                    send("ERRR 0");
+                    send("LGOT ERRR 0");
                 }
+            } else if (messages[0].equalsIgnoreCase("EXIT")) {
+                send("EXIT");
+                break;
             }
         }
 

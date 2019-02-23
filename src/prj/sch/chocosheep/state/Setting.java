@@ -1,23 +1,73 @@
 package prj.sch.chocosheep.state;
 
+import prj.sch.chocosheep.Const;
+import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.communication.Client;
 import prj.sch.chocosheep.input.KeyManager;
+import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.root.Root;
+import prj.sch.chocosheep.rootobject.*;
+import prj.sch.chocosheep.rootobject.TextField;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 class Setting extends State {
     private Root root;
+    private MouseManager mouseManager;
     private KeyManager keyManager;
 
-    Setting(Root root, KeyManager keyManager) {
+    private Text login;
+    private TextField id, password;
+    private Clickarea loginButton;
+
+    Setting(Root root, MouseManager mouseManager, KeyManager keyManager) {
         this.root = root;
+        this.mouseManager = mouseManager;
         this.keyManager = keyManager;
+
+        init();
+    }
+
+    private void init() {
+        login = new Text(92, 146, "F8R3D9S", new TextFormat(Const.FONT_PATH, 50, Const.BLACK));
+        TextFormat loginTextFieldTextFormat = new TextFormat(Const.FONT_PATH, 24, Color.WHITE);
+        id = new TextField(92, 166, 278, loginTextFieldTextFormat, Const.BLACK, mouseManager, keyManager);
+        password = new TextField(92, 206, 278, loginTextFieldTextFormat, Const.BLACK, mouseManager, keyManager);
+        password.setType(TextField.Type.PASSWORD);
+        loginButton = new Clickarea(92, 246, 278, (int) loginTextFieldTextFormat.getSize(), mouseManager);
     }
 
     @Override
     public void tick() {
         if (keyManager.getStartKeys()[KeyEvent.VK_ESCAPE]) {
             root.setState(new Lobby(root, root.getMouseManager(), keyManager, root.getDisplay()));
+        }
+
+        if (root.getClient().getLogin().equals("")) {
+            id.tick();
+            password.tick();
+            loginButton.tick();
+
+            if (loginButton.isClicked()) {
+                try {
+                    root.getClient().connect();
+                    root.getClient().login(id.getText(), password.getText());
+                } catch (IOException e) {
+                    RootObject.add(new AlertMessage("T4Q4R6 D44FF44D9TTW9 D6SGT3QS9E6.", root.getDisplay()));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void render(Graphics graphics) {
+        if (root.getClient().getLogin().equals("")) {
+            login.render(graphics);
+            id.render(graphics);
+            password.render(graphics);
+            loginButton.render(graphics);
         }
     }
 }

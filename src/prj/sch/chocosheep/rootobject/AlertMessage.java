@@ -27,7 +27,7 @@ public class AlertMessage extends RootObject {
 
     private void init() {
         textX = Positioning.center(display.getWidth(), TEXT_FORMAT.stringWidth(message));
-        textY = (int) (Positioning.center(display.getHeight(), TEXT_FORMAT.getSize()) + TEXT_FORMAT.getSize());
+        textY = (int) (Positioning.center(display.getHeight(), TEXT_FORMAT.getSize()) + TEXT_FORMAT.getSize() - TEXT_FORMAT.getSize() * 0.2);
         endTime = System.currentTimeMillis() + DURATION;
         rectWidth = TEXT_FORMAT.stringWidth(message) + 20;
         rectHeight = TEXT_FORMAT.stringHeight(message) + 20;

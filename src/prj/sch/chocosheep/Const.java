@@ -18,4 +18,7 @@ public class Const {
     public static Color COFFEE = new Color(0x591500);
 
     public static String FONT_PATH = "./res/font/BMJUA_ttf.ttf";
+
+    public static String SERVER_HOST = "shtelo.kro.kr";
+    public static int SERVER_PORT = 31685;
 }

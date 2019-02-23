@@ -5,6 +5,7 @@ import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class TextField extends RootObject {
     private int x, y, width;
@@ -13,9 +14,14 @@ public class TextField extends RootObject {
     private MouseManager mouseManager;
     private KeyManager keyManager;
 
+    public enum Type {
+        NORMAL, PASSWORD;
+    }
+
     private boolean inserting;
     private String text;
     private String clippedText;
+    private Type type;
 
     public TextField(int x, int y, int width, TextFormat textFormat, Color backgroundColor,
                      MouseManager mouseManager, KeyManager keyManager) {
@@ -34,6 +40,11 @@ public class TextField extends RootObject {
         inserting = false;
         text = "";
         clippedText = "";
+        type = Type.NORMAL;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     @Override
@@ -46,28 +57,32 @@ public class TextField extends RootObject {
             }
         }
 
-        if (keyManager.isStartKey()) {
-            if (inserting) {
-                text += keyManager.getContents();
-                keyManager.resetContents();
+        if (inserting) {
+            if (keyManager.isStartKey()) {
+                if (keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
+                    inserting = false;
+                } else {
+                    text += keyManager.getContents();
+                    keyManager.resetContents();
 
-                if (text.length() >= 1) {
-                    if (text.charAt(text.length() - 1) == '\b') {
-                        if (text.length() >= 2) {
-                            text = text.substring(0, text.length() - 2);
-                        } else {
-                            text = "";
+                    if (text.length() >= 1) {
+                        if (text.charAt(text.length() - 1) == '\b') {
+                            if (text.length() >= 2) {
+                                text = text.substring(0, text.length() - 2);
+                            } else {
+                                text = "";
+                            }
                         }
                     }
                 }
-
-                clippedText = text;
-                int i = 0;
-                while (textFormat.stringWidth(clippedText) >= width) {
-                    i++;
-                    clippedText = text.substring(i);
-                }
             }
+        }
+
+        clippedText = (type == Type.NORMAL ? text : "*".repeat(text.length())) + (inserting ? "_" : "");
+        int i = 0;
+        while (textFormat.stringWidth(clippedText) >= width) {
+            i++;
+            clippedText = text.substring(i);
         }
     }
 
@@ -80,7 +95,7 @@ public class TextField extends RootObject {
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics2D.setColor(textFormat.getColor());
         graphics2D.setFont(textFormat.getFont());
-        graphics2D.drawString(clippedText, x, y + textFormat.getSize());
+        graphics2D.drawString(clippedText, x, (float) (y + textFormat.getSize() - textFormat.getSize() * 0.2));
     }
 
     public String getText() {

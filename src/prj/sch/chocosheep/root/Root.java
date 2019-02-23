@@ -40,7 +40,7 @@ public class Root implements Runnable {
         thread = new Thread(this);
         running = false;
 
-        client = null;
+        client = new Client(this, Const.SERVER_HOST, Const.SERVER_PORT);
     }
 
     void windowResize() {
@@ -93,22 +93,30 @@ public class Root implements Runnable {
     @Override
     public void run() {
         long timePerLoop = (long) (1000 / display.getFps());
+        long previousLoop, loop = System.currentTimeMillis();
+        double delta = 0;
 
-        long previousFrame = System.currentTimeMillis(), frame = System.currentTimeMillis();
+        long previousFrame, frame = System.currentTimeMillis();
 
         while (running) {
+            previousLoop = loop;
+            loop = System.currentTimeMillis();
+            delta += (double) (loop - previousLoop) / timePerLoop;
             try {
-                Thread.sleep(Math.max(timePerLoop - ((frame - previousFrame) - timePerLoop), 0));
+                Thread.sleep(timePerLoop / 2);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            previousFrame = frame;
-            frame = System.currentTimeMillis();
-            display.setDisplayFps(1000.0 / (frame - previousFrame));
+            if (delta >= 1) {
+                delta--;
+                previousFrame = frame;
+                frame = System.currentTimeMillis();
+                display.setDisplayFps(1000.0 / (frame - previousFrame));
 
-            tick();
-            render();
+                tick();
+                render();
+            }
         }
 
         stop();
@@ -150,5 +158,9 @@ public class Root implements Runnable {
 
     public Client getClient() {
         return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }

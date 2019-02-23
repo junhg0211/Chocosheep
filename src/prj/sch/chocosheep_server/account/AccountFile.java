@@ -40,8 +40,9 @@ public class AccountFile {
         path = "./db/account/" + id + "." + EXTENSION;
         file = new File(path);
 
-        Path pathFile = Paths.get(path);
-        if (Files.exists(pathFile)) {
+        System.out.println("Hello, world!");
+
+        if (file.exists()) {
             load();
         } else {
             throw new IOException();

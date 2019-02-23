@@ -9,7 +9,12 @@ public class HUD extends RootObject {
     private Root root;
     private TextFormat textFormat;
 
-    private Text state, fps, cursor, objectCount, previewCard, connected;
+    private Text state;
+    private Text fps;
+    private Text cursor;
+    private Text objectCount;
+    private Text previewCard;
+    private Text connected;
 
     public HUD(Root root, TextFormat textFormat) {
         this.root = root;
