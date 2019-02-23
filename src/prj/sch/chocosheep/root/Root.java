@@ -1,6 +1,7 @@
 package prj.sch.chocosheep.root;
 
 import prj.sch.chocosheep.Const;
+import prj.sch.chocosheep.communication.Client;
 import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.TextFormat;
@@ -8,10 +9,12 @@ import prj.sch.chocosheep.rootobject.Card;
 import prj.sch.chocosheep.rootobject.HUD;
 import prj.sch.chocosheep.rootobject.RootObject;
 import prj.sch.chocosheep.state.Lobby;
+import prj.sch.chocosheep.state.ServerNotConnected;
 import prj.sch.chocosheep.state.State;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.io.IOException;
 
 public class Root implements Runnable {
     private MouseManager mouseManager;
@@ -19,6 +22,7 @@ public class Root implements Runnable {
     private Display display;
     private State state;
     private HUD hud;
+    private Client client;
 
     private Thread thread;
     private boolean running;
@@ -37,6 +41,12 @@ public class Root implements Runnable {
 
         thread = new Thread(this);
         running = false;
+
+        try {
+            client = new Client("shtelo.kro.kr", 31685);
+        } catch (IOException e) {
+            state = new ServerNotConnected(display);
+        }
     }
 
     void windowResize() {

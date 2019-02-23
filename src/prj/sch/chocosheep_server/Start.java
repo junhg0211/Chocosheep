@@ -27,7 +27,7 @@ public class Start {
         }
     }
 
-    public boolean isRunning() {
+    boolean isRunning() {
         return running;
     }
 }

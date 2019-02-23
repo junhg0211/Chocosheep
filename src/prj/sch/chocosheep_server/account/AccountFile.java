@@ -1,63 +1,71 @@
 package prj.sch.chocosheep_server.account;
 
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-class AccountFile {
-    private String id;
-    private String pw;
+public class AccountFile {
+    private final static String EXTENSION = "acc";
 
-    private File file;
+    public static void createNewFile(String id, String password) throws FileAlreadyExistsException {
+        String path = "./db/account/" + id + "." + EXTENSION;
+        File file = new File(path);
 
-    AccountFile(String id) {
-        this.id = id;
-
-        init();
-    }
-
-    private void init() {
-        file = new File("./db/accounts/" + id + ".txt");
-
-        boolean fileCreated;
-        try {
-            fileCreated = file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        if (fileCreated) {
+        if (!file.exists()) {
             try {
-                save();
+                save(file, password);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            try {
-                load();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            throw new FileAlreadyExistsException(path);
+        }
+    }
+
+    private String id, password;
+
+    private String path;
+    private File file;
+
+    AccountFile(String id, String password) throws IOException {
+        this.id = id;
+        this.password = password;
+
+        init();
+    }
+
+    private void init() throws IOException {
+        path = "./db/account/" + id + "." + EXTENSION;
+        file = new File(path);
+
+        Path pathFile = Paths.get(path);
+        if (Files.exists(pathFile)) {
+            load();
+        } else {
+            throw new IOException();
         }
     }
 
     private void save() throws IOException {
-        FileWriter fileWriter = new FileWriter(file);
+        save(file, password);
+    }
 
-        fileWriter.write(id);
+    private static void save(File file, String password) throws IOException {
+        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+        bufferedWriter.write(password);
     }
 
     private void load() throws IOException {
-        FileReader fileReader = new FileReader(file);
-
-        StringBuilder stringBuilder = new StringBuilder();
-        int i;
-        while ((i = fileReader.read()) != -1) {
-            stringBuilder.append(i);
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        String line;
+        int i = 0;
+        while ((line = bufferedReader.readLine()) != null) {
+            i++;
+            if (i == 1) {
+                password = line;
+            }
         }
-        String data = stringBuilder.toString();
-
-        String[] splitData = data.split("\n");
-
-        id = splitData[0];
     }
 }
