@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -28,8 +29,6 @@ class ServerThread extends Thread {
     private void init() throws IOException {
         scanner = new Scanner(socket.getInputStream());
         printStream = new PrintStream(socket.getOutputStream());
-
-        connected();
     }
 
     @Override
@@ -88,6 +87,18 @@ class ServerThread extends Thread {
                     send("LGOT ERRR 0");
                 }
                 break;
+            } else if (messages[0].equalsIgnoreCase("CHAT")) {
+                if (account != null) {
+                    ServerThread serverThread = start.getThreadById(messages[1]);
+                    if (serverThread != null) {
+                        serverThread.send("CHAT CHAT " + String.join(" ", Arrays.copyOfRange(messages, 2, messages.length)));
+                        send("CHAT SUCC");
+                    } else {
+                        send("CHAT ERRR 1");
+                    }
+                } else {
+                    send("CHAT ERRR 0");
+                }
             } else if (messages[0].equalsIgnoreCase("EXIT")) {
                 send("EXIT");
                 break;
@@ -109,15 +120,22 @@ class ServerThread extends Thread {
     }
 
     private void connected() {
+        start.getServerThreads().add(this);
         System.out.println(socket.getInetAddress() + "이(가) 접속했습니다.");
     }
 
     private void disconnected() {
+        start.getServerThreads().remove(this);
         System.out.println(socket.getInetAddress() + "이(가) 퇴장했습니다.");
     }
 
     @Override
     public synchronized void start() {
+        connected();
         super.start();
+    }
+
+    Account getAccount() {
+        return account;
     }
 }

@@ -3,10 +3,22 @@ package prj.sch.chocosheep_server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class Start {
     private boolean running = false;
     private static final int PORT = 31685;
+
+    private ArrayList<ServerThread> serverThreads = new ArrayList<>();
+
+    ServerThread getThreadById(String id) {
+        for (ServerThread serverThread : serverThreads) {
+            if (serverThread.getAccount().getId().equalsIgnoreCase(id)) {
+                return serverThread;
+            }
+        }
+        return null;
+    }
 
     public static void main(String[] args) throws IOException {
         new Start().startServer();
@@ -29,5 +41,9 @@ public class Start {
 
     boolean isRunning() {
         return running;
+    }
+
+    ArrayList<ServerThread> getServerThreads() {
+        return serverThreads;
     }
 }
