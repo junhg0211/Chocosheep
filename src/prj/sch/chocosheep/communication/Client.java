@@ -49,31 +49,48 @@ public class Client {
     public void login(String id, String password) {
         clientThread.resetQueue();
         send("LGIN " + id + " " + password);
-        String response;
-        long startTime = System.currentTimeMillis();
-        do {
-            response = clientThread.readQueue();
-            if (System.currentTimeMillis() > startTime + 1000) response = "LGIN ERRR 3";
-        } while (response.equals(""));
+        String response = getQueue();
+        if (response.equalsIgnoreCase("TMOT")) response = "LGIN TMOT";
+
         String[] responses = response.split(" ");
 
         if (responses[1].equalsIgnoreCase("PASS")) {
             RootObject.add(new AlertMessage("F8R3D9S T4DR8D!!", root.getDisplay()));
             login = id;
-        } else if (responses[1].equalsIgnoreCase("ERRR")) {
-            switch (responses[2]) {
-                case "1":
-                    RootObject.add(new AlertMessage("D6D9E9 EE8S3S Q9A9FQ4SG8R6 X3FF44TTT3QS9E6.", root.getDisplay()));
-                    break;
-                case "2":
-                    RootObject.add(new AlertMessage("D9A9 F8R3D9S E85D4 D9TTT3QS9E6.", root.getDisplay()));
-                    break;
-                case "3":
-                    RootObject.add(new AlertMessage("D6F T2 D4QTS3S D41F4R6 Q6FT63DG63TTT3QS9E6.", root.getDisplay()));
-                    break;
+        } else {
+            if (responses[1].equalsIgnoreCase("ERRR")) {
+                switch (responses[2]) {
+                    case "1":
+                        RootObject.add(new AlertMessage("D6D9E9 EE8S3S Q9A9FQ4SG8R6 X3FF44TTT3QS9E6.", root.getDisplay()));
+                        break;
+                    case "2":
+                        RootObject.add(new AlertMessage("D9A9 F8R3D9S E85D4 D9TTT3QS9E6.", root.getDisplay()));
+                        break;
+                }
+                send("EXIT");
+            } else if (responses[1].equalsIgnoreCase("TMOT")) {
+                RootObject.add(new AlertMessage("T9R6S V8R86, E6T9 T9E8G63W2T41D88.", root.getDisplay()));
             }
             send("EXIT");
         }
+    }
+
+    public void logout() {
+        clientThread.resetQueue();
+        send("LGOT");
+
+        login = "";
+        RootObject.add(new AlertMessage("F8R3D6D2T E85D4TTT3QS9E6!", root.getDisplay()));
+    }
+
+    private String getQueue() {
+        String response;
+        long startTime = System.currentTimeMillis();
+        do {
+            response = clientThread.readQueue();
+            if (System.currentTimeMillis() > startTime + 1000) return "TMOT";
+        } while (response.equals(""));
+        return response;
     }
 
     private void start() {

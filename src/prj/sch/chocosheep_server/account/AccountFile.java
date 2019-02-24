@@ -2,9 +2,6 @@ package prj.sch.chocosheep_server.account;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class AccountFile {
     private final static String EXTENSION = "acc";
@@ -40,10 +37,10 @@ public class AccountFile {
         path = "./db/account/" + id + "." + EXTENSION;
         file = new File(path);
 
-        System.out.println("Hello, world!");
-
         if (file.exists()) {
-            load();
+            String[] data = load();
+            if (!data[0].equals(password))
+                throw new IOException();
         } else {
             throw new IOException();
         }
@@ -58,15 +55,17 @@ public class AccountFile {
         bufferedWriter.write(password);
     }
 
-    private void load() throws IOException {
+    private String[] load() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+        String[] result = new String[1];
         String line;
         int i = 0;
         while ((line = bufferedReader.readLine()) != null) {
-            i++;
-            if (i == 1) {
-                password = line;
+            if (i == 0) {
+                result[i] = line;
             }
+            i++;
         }
+        return result;
     }
 }

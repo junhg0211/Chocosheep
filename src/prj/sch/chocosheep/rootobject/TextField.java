@@ -47,6 +47,10 @@ public class TextField extends RootObject {
         this.type = type;
     }
 
+    public void resetText() {
+        text = "";
+    }
+
     @Override
     public void tick() {
         if (mouseManager.getStartClick()[0]) {

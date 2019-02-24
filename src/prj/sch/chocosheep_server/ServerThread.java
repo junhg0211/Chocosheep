@@ -87,6 +87,7 @@ class ServerThread extends Thread {
                 } else {
                     send("LGOT ERRR 0");
                 }
+                break;
             } else if (messages[0].equalsIgnoreCase("EXIT")) {
                 send("EXIT");
                 break;
