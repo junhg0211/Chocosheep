@@ -53,4 +53,8 @@ public class Text extends RootObject {
     public String getText() {
         return text;
     }
+
+    public int getX() {
+        return x;
+    }
 }

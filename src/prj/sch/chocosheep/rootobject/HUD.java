@@ -15,6 +15,7 @@ public class HUD extends RootObject {
     private Text objectCount;
     private Text previewCard;
     private Text connected;
+    private Text logined;
 
     public HUD(Root root, TextFormat textFormat) {
         this.root = root;
@@ -30,6 +31,7 @@ public class HUD extends RootObject {
         objectCount = new Text(0, (int) (textFormat.getSize() * 4), "", textFormat);
         previewCard = new Text(0, (int) (textFormat.getSize() * 5), "", textFormat);
         connected = new Text(0, (int) (textFormat.getSize() * 6), "", textFormat);
+        logined = new Text(0, (int) (textFormat.getSize() * 7), "", textFormat);
     }
 
     @Override
@@ -48,6 +50,7 @@ public class HUD extends RootObject {
         } else {
             connected.setText("s null");
         }
+        logined.setText("l " + root.getClient().getLogin());
     }
 
     @Override
@@ -58,5 +61,6 @@ public class HUD extends RootObject {
         objectCount.render(graphics);
         previewCard.render(graphics);
         connected.render(graphics);
+        logined.render(graphics);
     }
 }

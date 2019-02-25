@@ -19,7 +19,7 @@ class Setting extends State {
 
     private Text login;
     private TextField id, password;
-    private Clickarea logInOutButton;
+    private Clickarea registerButton, logInOutButton;
 
     private Text nowLogin;
 
@@ -37,7 +37,8 @@ class Setting extends State {
         id = new TextField(92, 166, 278, loginTextFieldTextFormat, Const.BLACK, mouseManager, keyManager);
         password = new TextField(92, 206, 278, loginTextFieldTextFormat, Const.BLACK, mouseManager, keyManager);
         password.setType(TextField.Type.PASSWORD);
-        logInOutButton = new Clickarea(92, 246, 278, (int) loginTextFieldTextFormat.getSize(), mouseManager);
+        registerButton = new Clickarea(92, 246, 129, (int) loginTextFieldTextFormat.getSize(), mouseManager);
+        logInOutButton = new Clickarea(241, 246, 129, (int) loginTextFieldTextFormat.getSize(), mouseManager);
 
         nowLogin = new Text(92, 206, "F8R3D9S E85A", new TextFormat(Const.FONT_PATH, 24, Const.BLACK));
     }
@@ -52,6 +53,7 @@ class Setting extends State {
         if (root.getClient().getLogin().equals("")) {
             id.tick();
             password.tick();
+            registerButton.tick();
 
             if (logInOutButton.isClicked()) {
                 try {
@@ -60,13 +62,15 @@ class Setting extends State {
                 } catch (IOException e) {
                     RootObject.add(new AlertMessage("T4Q4D41 W4QT8RG6F T2 D4QTT3QS9E6.", root.getDisplay()));
                 }
+            } else if (registerButton.isClicked()) {
+                root.setState(new Register(root, root.getDisplay(), keyManager, mouseManager));
             }
-            } else {
-                nowLogin.setText(root.getClient().getLogin() + " W4QT8R W2D");
-                if (logInOutButton.isClicked()) {
-                    id.resetText();
-                    password.resetText();
-                    root.getClient().logout();
+        } else {
+            nowLogin.setText(root.getClient().getLogin() + " W4QT8R W2D");
+            if (logInOutButton.isClicked()) {
+                id.resetText();
+                password.resetText();
+                root.getClient().logout();
             }
         }
     }
@@ -78,6 +82,7 @@ class Setting extends State {
         if (root.getClient().getLogin().equals("")) {
             id.render(graphics);
             password.render(graphics);
+            registerButton.render(graphics);
         } else {
             nowLogin.render(graphics);
         }
