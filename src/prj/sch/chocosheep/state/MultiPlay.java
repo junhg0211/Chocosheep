@@ -22,7 +22,7 @@ class MultiPlay extends State {
     }
 
     private void init() throws Exception {
-        if (root.getClient().getLogin().equals("")) {
+        if (!root.getClient().getLogin()) {
             RootObject.add(new AlertMessage("A4FX9V3FF41D9F3F D25G63T4S3S F8R3D9S G63 W2T41D88!", display));
             throw new Exception();
         }

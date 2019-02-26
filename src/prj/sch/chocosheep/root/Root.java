@@ -12,6 +12,7 @@ import prj.sch.chocosheep.state.Lobby;
 import prj.sch.chocosheep.state.State;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 
 public class Root implements Runnable {
@@ -35,7 +36,7 @@ public class Root implements Runnable {
         display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyManager, this);
 
         state = new Lobby(this, mouseManager, keyManager, display);
-        hud = new HUD(this, new TextFormat(Const.FONT_PATH, 12, Const.BLACK));
+        hud = new HUD(this, new TextFormat(Const.FONT_PATH, 12, Const.BLACK), keyManager);
 
         thread = new Thread(this);
         running = false;
@@ -160,7 +161,7 @@ public class Root implements Runnable {
         return client;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public KeyManager getKeyManager() {
+        return keyManager;
     }
 }

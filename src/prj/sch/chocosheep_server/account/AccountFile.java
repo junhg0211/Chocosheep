@@ -51,8 +51,9 @@ public class AccountFile {
     }
 
     private static void save(File file, String password) throws IOException {
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
-        bufferedWriter.write(password);
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(password);
+        fileWriter.close();
     }
 
     private String[] load() throws IOException {

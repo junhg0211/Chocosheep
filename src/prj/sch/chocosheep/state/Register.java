@@ -2,6 +2,7 @@ package prj.sch.chocosheep.state;
 
 import prj.sch.chocosheep.Const;
 import prj.sch.chocosheep.TextFormat;
+import prj.sch.chocosheep.communication.Client;
 import prj.sch.chocosheep.functions.Positioning;
 import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
@@ -12,10 +13,12 @@ import prj.sch.chocosheep.rootobject.TextField;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 class Register extends State {
     private Root root;
     private Display display;
+    private Client client;
     private KeyManager keyManager;
     private MouseManager mouseManager;
 
@@ -23,9 +26,10 @@ class Register extends State {
     private TextField id, password;
     private Clickarea apply;
 
-    Register(Root root, Display display, KeyManager keyManager, MouseManager mouseManager) {
+    Register(Root root, Display display, Client client, KeyManager keyManager, MouseManager mouseManager) {
         this.root = root;
         this.display = display;
+        this.client = client;
         this.keyManager = keyManager;
         this.mouseManager = mouseManager;
 
@@ -55,7 +59,18 @@ class Register extends State {
         apply.tick();
 
         if (apply.isClicked()) {
-            RootObject.add(new AlertMessage("R2G44SE85W9 D6SGD3S R9S3DD9QS9E6.", display));
+            System.out.println("Hasd");
+            String id = this.id.getText(), password = this.password.getText();
+            if (id.equals("") || password.equals("")) {
+                RootObject.add(new AlertMessage("S63D88DD3F D9QF44RG63W2T41D88.", display));
+            } else {
+                try {
+                    client.connect();
+                    client.register(id, password);
+                } catch (IOException e) {
+                    RootObject.add(new AlertMessage("T4Q4D41 W4QT8RG6F T2 D4QTT3QS9E6.", display));
+                }
+            }
         }
     }
 

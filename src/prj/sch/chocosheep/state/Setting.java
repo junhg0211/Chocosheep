@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-class Setting extends State {
+public class Setting extends State {
     private Root root;
     private MouseManager mouseManager;
     private KeyManager keyManager;
@@ -23,7 +23,7 @@ class Setting extends State {
 
     private Text nowLogin;
 
-    Setting(Root root, MouseManager mouseManager, KeyManager keyManager) {
+    public Setting(Root root, MouseManager mouseManager, KeyManager keyManager) {
         this.root = root;
         this.mouseManager = mouseManager;
         this.keyManager = keyManager;
@@ -50,7 +50,7 @@ class Setting extends State {
         }
 
         logInOutButton.tick();
-        if (root.getClient().getLogin().equals("")) {
+        if (!root.getClient().getLogin()) {
             id.tick();
             password.tick();
             registerButton.tick();
@@ -63,10 +63,13 @@ class Setting extends State {
                     RootObject.add(new AlertMessage("T4Q4D41 W4QT8RG6F T2 D4QTT3QS9E6.", root.getDisplay()));
                 }
             } else if (registerButton.isClicked()) {
-                root.setState(new Register(root, root.getDisplay(), keyManager, mouseManager));
+                root.setState(new Register(root, root.getDisplay(), root.getClient(), keyManager, mouseManager));
             }
         } else {
-            nowLogin.setText(root.getClient().getLogin() + " W4QT8R W2D");
+            if (root.getClient().getId() == null) {
+                root.getClient().refreshId();
+            }
+            nowLogin.setText(root.getClient().getId() + " W4QT8R W2D");
             if (logInOutButton.isClicked()) {
                 id.resetText();
                 password.resetText();
@@ -79,7 +82,7 @@ class Setting extends State {
     public void render(Graphics graphics) {
         login.render(graphics);
         logInOutButton.render(graphics);
-        if (root.getClient().getLogin().equals("")) {
+        if (!root.getClient().getLogin()) {
             id.render(graphics);
             password.render(graphics);
             registerButton.render(graphics);

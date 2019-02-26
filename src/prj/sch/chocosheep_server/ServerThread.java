@@ -86,6 +86,7 @@ class ServerThread extends Thread {
                 } else {
                     send("LGOT ERRR 0");
                 }
+                send("EXIT");
                 break;
             } else if (messages[0].equalsIgnoreCase("CHAT")) {
                 if (account != null) {
@@ -110,12 +111,14 @@ class ServerThread extends Thread {
 
     private String recv() {
         String message = scanner.nextLine();
-        System.out.println(socket.getInetAddress() + " -> " + message);
+        if (!message.substring(0, 4).equalsIgnoreCase("PING"))
+            System.out.println(socket.getInetAddress() + " -> " + message);
         return message;
     }
 
     private void send(String message) {
-        System.out.println(socket.getInetAddress() + " <- " + message);
+        if (!message.substring(0, 4).equalsIgnoreCase("PING"))
+            System.out.println(socket.getInetAddress() + " <- " + message);
         printStream.println(message);
     }
 

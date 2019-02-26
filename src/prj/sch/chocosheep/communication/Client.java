@@ -7,6 +7,7 @@ import prj.sch.chocosheep.rootobject.RootObject;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Client {
@@ -19,7 +20,9 @@ public class Client {
     private Scanner scanner;
     private ClientThread clientThread;
 
-    private String login;
+    private boolean login;
+    private String lastMessage;
+    private boolean lastMessageSended;
 
     public Client(Root root, String host, int port) {
         this.root = root;
@@ -30,10 +33,13 @@ public class Client {
     }
 
     private void init() {
-        login = "";
+        login = false;
+        lastMessage = "";
     }
 
     public void connect() throws IOException {
+        if (connected)
+            return;
         Socket socket = new Socket(host, port);
 
         connected = true;
@@ -46,73 +52,80 @@ public class Client {
         start();
     }
 
+    void disconnect() {
+        if (login)
+            logout();
+        printStream = null;
+        scanner = null;
+        connected = false;
+    }
+
     public void login(String id, String password) {
-        clientThread.resetQueue();
         send("LGIN " + id + " " + password);
-        String response = getQueue();
-        if (response.equalsIgnoreCase("TMOT")) response = "LGIN TMOT";
-
-        String[] responses = response.split(" ");
-
-        if (responses[1].equalsIgnoreCase("PASS")) {
-            RootObject.add(new AlertMessage("F8R3D9S T4DR8D!!", root.getDisplay()));
-            login = id;
-        } else {
-            if (responses[1].equalsIgnoreCase("ERRR")) {
-                switch (responses[2]) {
-                    case "1":
-                        RootObject.add(new AlertMessage("D6D9E9 EE8S3S Q9A9FQ4SG8R6 X3FF44TTT3QS9E6.", root.getDisplay()));
-                        break;
-                    case "2":
-                        RootObject.add(new AlertMessage("D9A9 F8R3D9S E85D4 D9TTT3QS9E6.", root.getDisplay()));
-                        break;
-                }
-                send("EXIT");
-            } else if (responses[1].equalsIgnoreCase("TMOT")) {
-                RootObject.add(new AlertMessage("T9R6S V8R86, E6T9 T9E8G63W2T41D88.", root.getDisplay()));
-            }
-            send("EXIT");
-        }
     }
 
     public void logout() {
-        clientThread.resetQueue();
         send("LGOT");
 
-        login = "";
+        login = false;
+        clientThread.resetLoginId();
         RootObject.add(new AlertMessage("F8R3D6D2T E85D4TTT3QS9E6!", root.getDisplay()));
     }
 
-    private String getQueue() {
-        String response;
-        long startTime = System.currentTimeMillis();
-        do {
-            response = clientThread.readQueue();
-            if (System.currentTimeMillis() > startTime + 1000) return "TMOT";
-        } while (response.equals(""));
-        return response;
+    public void register(String id, String password) {
+        send("RGST " + id + " " + password);
     }
 
     private void start() {
         clientThread.start();
     }
 
-    private void send(String message) {
+    public String getId() {
+        if (clientThread == null)
+            return null;
+        return clientThread.getLoginId();
+    }
+
+    public void refreshId() {
+        send("LGIN");
+    }
+
+    void send(String message) {
+        lastMessage = message;
+        lastMessageSended = true;
         System.out.println("SERVER <- " + message);
         printStream.println(message);
     }
 
     String recv() {
-        String message = scanner.nextLine();
-        System.out.println("SERVER -> " + message);
-        return message;
+        try {
+            lastMessage = scanner.nextLine();
+            lastMessageSended = false;
+        } catch (NoSuchElementException e) {
+            disconnect();
+            return null;
+        }
+        System.out.println("SERVER -> " + lastMessage);
+        return lastMessage;
     }
 
     boolean isConnected() {
         return connected;
     }
 
-    public String getLogin() {
+    public boolean getLogin() {
         return login;
+    }
+
+    void setLogin(boolean login) {
+        this.login = login;
+    }
+
+    public String getLastMessage() {
+        return lastMessage;
+    }
+
+    public boolean isLastMessageSended() {
+        return lastMessageSended;
     }
 }
