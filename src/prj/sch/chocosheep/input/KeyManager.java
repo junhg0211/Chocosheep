@@ -57,6 +57,10 @@ public class KeyManager implements KeyListener {
         return startKeys;
     }
 
+    public void resetStartKey(int index) {
+        startKeys[index] = false;
+    }
+
     public boolean isStartKey() {
         return startKey;
     }

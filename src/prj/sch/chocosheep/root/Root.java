@@ -6,8 +6,10 @@ import prj.sch.chocosheep.input.KeyManager;
 import prj.sch.chocosheep.input.MouseManager;
 import prj.sch.chocosheep.TextFormat;
 import prj.sch.chocosheep.rootobject.Card;
+import prj.sch.chocosheep.rootobject.ChattingOverlay;
 import prj.sch.chocosheep.rootobject.HUD;
 import prj.sch.chocosheep.rootobject.RootObject;
+import prj.sch.chocosheep.rootobject.TextField;
 import prj.sch.chocosheep.state.Lobby;
 import prj.sch.chocosheep.state.State;
 
@@ -56,16 +58,27 @@ public class Root implements Runnable {
     private void tick() {
         Card.previousPreviewing = Card.previewing;
 
+        try {
+            TextField.refreshFocused();
+        } catch (NullPointerException ignored) {}
+
         mouseManager.tick();
         keyManager.tick();
 
-        state.tick();
+        if (keyManager.getStartKeys()[KeyEvent.VK_M]) {
+            if (RootObject.getObjectByClassType(ChattingOverlay.class) == null) {
+                if (TextField.getFocused() == null)
+                    RootObject.add(new ChattingOverlay(display, mouseManager, keyManager));
+            }
+        }
 
         RootObject.sumAddQueue();
         for (RootObject object : RootObject.objects) {
             object.tick();
         }
         RootObject.clearDeleteQueue();
+
+        state.tick();
 
         hud.tick();
     }

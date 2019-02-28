@@ -12,7 +12,7 @@ public class HUD extends RootObject {
     private TextFormat textFormat;
     private KeyManager keyManager;
 
-    private Text state, fps, cursor, objectCount, previewCard, connected, logged, lastMessage;
+    private Text state, fps, cursor, objectCount, previewCard, focusedTextField, connected, logged, lastMessage;
 
     private boolean show;
 
@@ -30,9 +30,10 @@ public class HUD extends RootObject {
         cursor = new Text(0, (int) (textFormat.getSize() * 3), "", textFormat);
         objectCount = new Text(0, (int) (textFormat.getSize() * 4), "", textFormat);
         previewCard = new Text(0, (int) (textFormat.getSize() * 5), "", textFormat);
-        connected = new Text(0, (int) (textFormat.getSize() * 6), "", textFormat);
-        logged = new Text(0, (int) (textFormat.getSize() * 7), "", textFormat);
-        lastMessage = new Text(0, (int) (textFormat.getSize() * 8), "", textFormat);
+        focusedTextField = new Text(0, (int) (textFormat.getSize() * 6), "", textFormat);
+        connected = new Text(0, (int) (textFormat.getSize() * 7), "", textFormat);
+        logged = new Text(0, (int) (textFormat.getSize() * 8), "", textFormat);
+        lastMessage = new Text(0, (int) (textFormat.getSize() * 9), "", textFormat);
 
         show = false;
     }
@@ -53,6 +54,7 @@ public class HUD extends RootObject {
             } else {
                 previewCard.setText("p null");
             }
+            focusedTextField.setText("t " + TextField.getFocused());
             if (root.getClient() != null) {
                 connected.setText("s " + root.getClient());
             } else {
@@ -71,6 +73,7 @@ public class HUD extends RootObject {
             cursor.render(graphics);
             objectCount.render(graphics);
             previewCard.render(graphics);
+            focusedTextField.render(graphics);
             connected.render(graphics);
             logged.render(graphics);
             lastMessage.render(graphics);

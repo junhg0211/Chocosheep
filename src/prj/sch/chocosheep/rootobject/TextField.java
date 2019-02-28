@@ -8,6 +8,14 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class TextField extends RootObject {
+    private static TextField focused;
+
+    public static void refreshFocused() {
+        if (!focused.isInserting()) {
+            focused = null;
+        }
+    }
+
     private int x, y, width;
     private TextFormat textFormat;
     private Color backgroundColor;
@@ -15,7 +23,7 @@ public class TextField extends RootObject {
     private KeyManager keyManager;
 
     public enum Type {
-        NORMAL, PASSWORD;
+        NORMAL, PASSWORD
     }
 
     private boolean inserting;
@@ -63,7 +71,7 @@ public class TextField extends RootObject {
 
         if (inserting) {
             if (keyManager.isStartKey()) {
-                if (keyManager.getStartKeys()[KeyEvent.VK_ENTER]) {
+                if (keyManager.getStartKeys()[KeyEvent.VK_ENTER] || keyManager.getStartKeys()[KeyEvent.VK_ESCAPE]) {
                     inserting = false;
                 } else {
                     text += keyManager.getContents();
@@ -88,6 +96,9 @@ public class TextField extends RootObject {
             i++;
             clippedText = text.substring(i);
         }
+
+        if (inserting)
+            focused = this;
     }
 
     @Override
@@ -133,4 +144,14 @@ public class TextField extends RootObject {
     public int getWidth() {
         return width;
     }
+
+    public static TextField getFocused() {
+        return focused;
+    }
+
+    private boolean isInserting() {
+        return inserting;
+    }
+
+
 }

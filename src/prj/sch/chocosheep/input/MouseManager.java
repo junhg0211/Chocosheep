@@ -72,24 +72,22 @@ public class MouseManager implements MouseInputListener {
         return y;
     }
 
-    public boolean[] getClick() {
-        return click;
-    }
-
-    public boolean getLeftClick() {
-        return click[0];
-    }
-
     public boolean[] getStartClick() {
         return startClick;
     }
 
-    public boolean[] getEndClick() {
-        return endClick;
+    public boolean getStartClick(int index) {
+        boolean result = startClick[index];
+        startClick[index] = false;
+        return result;
     }
 
     public boolean getLeftEndClick() {
         return endClick[0];
+    }
+
+    public void resetLeftEndClick() {
+        endClick[0] = false;
     }
 
     public int getClickStartX() {
@@ -99,4 +97,5 @@ public class MouseManager implements MouseInputListener {
     public int getClickStartY() {
         return clickStartY;
     }
+
 }

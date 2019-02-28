@@ -8,6 +8,15 @@ public class RootObject {
     private static ArrayList<RootObject> destroyQueue = new ArrayList<>();
     private static ArrayList<RootObject> addQueue = new ArrayList<>();
 
+    public static RootObject getObjectByClassType(Class<ChattingOverlay> rootObjectClass) {
+        for (RootObject object : objects) {
+            if (object.getClass() == rootObjectClass) {
+                return object;
+            }
+        }
+        return null;
+    }
+
     public static void add(RootObject object) {
         addQueue.add(object);
     }
