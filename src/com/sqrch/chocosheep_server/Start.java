@@ -9,12 +9,12 @@ public class Start {
     private boolean running = false;
     private static final int PORT = 31685;
 
-    private ArrayList<ServerThread> serverThreads = new ArrayList<>();
+    private ArrayList<ServerClient> serverClients = new ArrayList<>();
 
-    ServerThread getThreadById(String id) {
-        for (ServerThread serverThread : serverThreads) {
-            if (serverThread.getAccount().getId().equalsIgnoreCase(id)) {
-                return serverThread;
+    ServerClient getThreadById(String id) {
+        for (ServerClient serverClient : serverClients) {
+            if (serverClient.getAccount().getId().equalsIgnoreCase(id)) {
+                return serverClient;
             }
         }
         return null;
@@ -35,7 +35,7 @@ public class Start {
         while (running) {
             Socket socket = serverSocket.accept();
 
-            new ServerThread(socket, this).start();
+            new ServerClient(socket, this).start();
         }
     }
 
@@ -43,7 +43,7 @@ public class Start {
         return running;
     }
 
-    ArrayList<ServerThread> getServerThreads() {
-        return serverThreads;
+    ArrayList<ServerClient> getServerClients() {
+        return serverClients;
     }
 }

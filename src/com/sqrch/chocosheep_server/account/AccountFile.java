@@ -2,17 +2,20 @@ package com.sqrch.chocosheep_server.account;
 
 import java.io.*;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AccountFile {
     private final static String EXTENSION = "acc";
 
-    public static void createNewFile(String id, String password) throws FileAlreadyExistsException {
+    public static void createNewFile(String id, String password, ArrayList<String> friends)
+            throws FileAlreadyExistsException {
         String path = "./db/account/" + id + "." + EXTENSION;
         File file = new File(path);
 
         if (!file.exists()) {
             try {
-                save(file, password);
+                save(file, password, friends);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -22,6 +25,7 @@ public class AccountFile {
     }
 
     private String id, password;
+    private ArrayList<String> friends;
 
     private String path;
     private File file;
@@ -47,26 +51,25 @@ public class AccountFile {
     }
 
     private void save() throws IOException {
-        save(file, password);
+        save(file, password, friends);
     }
 
-    private static void save(File file, String password) throws IOException {
+    private static void save(File file, String password, ArrayList<String> friends) throws IOException {
         FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(password);
+        fileWriter.write(password + "\n");
+        fileWriter.write(String.join(" ", friends));
         fileWriter.close();
     }
 
     private String[] load() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-        String[] result = new String[1];
+        String[] result = new String[2];
         String line;
-        int i = 0;
-        while ((line = bufferedReader.readLine()) != null) {
-            if (i == 0) {
-                result[i] = line;
-            }
-            i++;
+        for (int i = 0; (line = bufferedReader.readLine()) != null; i++) {
+            result[i] = line;
         }
+        password = result[0];
+        friends = new ArrayList<>(Arrays.asList(result[1].split(" ")));
         return result;
     }
 }

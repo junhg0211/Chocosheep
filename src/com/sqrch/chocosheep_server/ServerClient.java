@@ -7,11 +7,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-class ServerThread extends Thread {
+class ServerClient extends Thread {
     private Socket socket;
     private Start start;
 
@@ -19,7 +20,7 @@ class ServerThread extends Thread {
     private PrintStream printStream;
     private Account account;
 
-    ServerThread(Socket socket, Start start) throws IOException {
+    ServerClient(Socket socket, Start start) throws IOException {
         this.socket = socket;
         this.start = start;
 
@@ -73,7 +74,7 @@ class ServerThread extends Thread {
                     String id = messages[1];
                     String password = messages[2];
                     try {
-                        AccountFile.createNewFile(id, password);
+                        AccountFile.createNewFile(id, password, new ArrayList<>());
                         send("RGST PASS");
                     } catch (FileAlreadyExistsException e) {
                         send("RGST ERRR 0");
@@ -90,15 +91,37 @@ class ServerThread extends Thread {
                 break;
             } else if (messages[0].equalsIgnoreCase("CHAT")) {
                 if (account != null) {
-                    ServerThread serverThread = start.getThreadById(messages[1]);
-                    if (serverThread != null) {
-                        serverThread.send("CHAT CHAT " + String.join(" ", Arrays.copyOfRange(messages, 2, messages.length)));
+                    ServerClient serverClient = start.getThreadById(messages[1]);
+                    if (serverClient != null) {
+                        serverClient.send("CHAT CHAT " +
+                                String.join(" ", Arrays.copyOfRange(messages, 2, messages.length)));
                         send("CHAT SUCC");
                     } else {
                         send("CHAT ERRR 1");
                     }
                 } else {
                     send("CHAT ERRR 0");
+                }
+            } else if (messages[0].equalsIgnoreCase("FRND")) {
+//                ServerClient serverClient = start.getThreadById(messages[1]); // TODO NOTIFICATION THAT YOU ARE ADDED TO SOMEONE'S FRIEND LIST!
+                if (account != null) {
+                    if (messages[2].equalsIgnoreCase("TRUE")) {
+                        if (!account.getFriends().contains(messages[1])) {
+                            account.getFriends().add(messages[1]);
+                            send("FRND SUCC");
+                        } else {
+                            send("FRND ERRR 1");
+                        }
+                    } else if (messages[1].equalsIgnoreCase("FLSE")) {
+                        if (account.getFriends().contains(messages[1])) {
+                            account.getFriends().remove(messages[1]);
+                            send("FRND SUCC");
+                        } else {
+                            send("FRND ERRR 1");
+                        }
+                    }
+                } else {
+                    send("FRND ERRR 0");
                 }
             } else if (messages[0].equalsIgnoreCase("EXIT")) {
                 send("EXIT");
@@ -123,12 +146,12 @@ class ServerThread extends Thread {
     }
 
     private void connected() {
-        start.getServerThreads().add(this);
+        start.getServerClients().add(this);
         System.out.println(socket.getInetAddress() + "이(가) 접속했습니다.");
     }
 
     private void disconnected() {
-        start.getServerThreads().remove(this);
+        start.getServerClients().remove(this);
         System.out.println(socket.getInetAddress() + "이(가) 퇴장했습니다.");
     }
 
@@ -141,4 +164,6 @@ class ServerThread extends Thread {
     Account getAccount() {
         return account;
     }
+
+
 }

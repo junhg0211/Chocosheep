@@ -22,7 +22,7 @@ public class Client {
 
     private boolean login;
     private String lastMessage;
-    private boolean lastMessageSended;
+    private boolean lastMessageSend;
 
     public Client(Root root, String host, int port) {
         this.root = root;
@@ -92,7 +92,7 @@ public class Client {
 
     void send(String message) {
         lastMessage = message;
-        lastMessageSended = true;
+        lastMessageSend = true;
         System.out.println("SERVER <- " + message);
         printStream.println(message);
     }
@@ -100,7 +100,7 @@ public class Client {
     String recv() {
         try {
             lastMessage = scanner.nextLine();
-            lastMessageSended = false;
+            lastMessageSend = false;
         } catch (NoSuchElementException e) {
             disconnect();
             return null;
@@ -125,7 +125,7 @@ public class Client {
         return lastMessage;
     }
 
-    public boolean isLastMessageSended() {
-        return lastMessageSended;
+    public boolean isLastMessageSend() {
+        return lastMessageSend;
     }
 }

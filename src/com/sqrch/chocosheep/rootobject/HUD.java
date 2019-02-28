@@ -61,7 +61,7 @@ public class HUD extends RootObject {
                 connected.setText("s null");
             }
             logged.setText("l " + root.getClient().getLogin());
-            lastMessage.setText("r " + root.getClient().isLastMessageSended() + " " + root.getClient().getLastMessage());
+            lastMessage.setText("r " + root.getClient().isLastMessageSend() + " " + root.getClient().getLastMessage());
         }
     }
 
