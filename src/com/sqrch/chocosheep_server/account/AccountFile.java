@@ -15,7 +15,7 @@ public class AccountFile {
 
         if (!file.exists()) {
             try {
-                save(file, password, friends);
+                save(file, password, friends, "");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -26,6 +26,7 @@ public class AccountFile {
 
     private String id, password;
     private ArrayList<String> friends;
+    private String name;
 
     private String path;
     private File file;
@@ -51,25 +52,27 @@ public class AccountFile {
     }
 
     private void save() throws IOException {
-        save(file, password, friends);
+        save(file, password, friends, name);
     }
 
-    private static void save(File file, String password, ArrayList<String> friends) throws IOException {
+    private static void save(File file, String password, ArrayList<String> friends, String name) throws IOException {
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(password + "\n");
-        fileWriter.write(String.join(" ", friends));
+        fileWriter.write(String.join(" ", friends) + "\n");
+        fileWriter.write(name + "\n");
         fileWriter.close();
     }
 
     private String[] load() throws IOException {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-        String[] result = new String[2];
+        String[] result = new String[3];
         String line;
         for (int i = 0; (line = bufferedReader.readLine()) != null; i++) {
             result[i] = line;
         }
         password = result[0];
         friends = new ArrayList<>(Arrays.asList(result[1].split(" ")));
+        name = result[2];
         return result;
     }
 }

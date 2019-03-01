@@ -71,7 +71,7 @@ public class Root implements Runnable {
             if (RootObject.getObjectByClassType(ChattingOverlay.class) == null) {
                 if (TextField.getFocused() == null) {
                     if (client.isLogin()) {
-                        RootObject.add(new ChattingOverlay(display, mouseManager, keyManager));
+                        RootObject.add(new ChattingOverlay(display, client, mouseManager, keyManager));
                     } else {
                         RootObject.add(new AlertMessage(languageManager.getString("MessageNeedsLogin"), display));
                     }

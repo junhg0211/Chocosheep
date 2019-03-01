@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class Account {
     private String id, password;
     private ArrayList<String> friends;
+    private String name;
     private AccountFile accountFile;
 
     public Account(String id, String password) throws IOException {
@@ -26,5 +27,13 @@ public class Account {
 
     public ArrayList<String> getFriends() {
         return friends;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public AccountFile getAccountFile() {
+        return accountFile;
     }
 }

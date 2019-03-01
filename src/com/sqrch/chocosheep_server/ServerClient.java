@@ -126,6 +126,12 @@ class ServerClient extends Thread {
             } else if (messages[0].equalsIgnoreCase("EXIT")) {
                 send("EXIT");
                 break;
+            } else if (messages[0].equalsIgnoreCase("NAME")) {
+                if (messages.length == 1) {
+                    if (account != null) {
+                        send("NAME " + account.getName());
+                    }
+                }
             }
         }
 

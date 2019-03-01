@@ -55,7 +55,7 @@ public class HUD extends RootObject {
                 previewCard.setText("p null");
             }
             focusedTextField.setText("t " + TextField.getFocused());
-            if (root.getClient() != null) {
+            if (root.getClient().isConnected()) {
                 connected.setText("s " + root.getClient());
             } else {
                 connected.setText("s null");

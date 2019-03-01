@@ -90,7 +90,7 @@ public class Client {
         send("LGIN");
     }
 
-    void send(String message) {
+    public void send(String message) {
         lastMessage = message;
         lastMessageSend = true;
         System.out.println("SERVER <- " + message);
@@ -109,7 +109,7 @@ public class Client {
         return lastMessage;
     }
 
-    boolean isConnected() {
+    public boolean isConnected() {
         return connected;
     }
 

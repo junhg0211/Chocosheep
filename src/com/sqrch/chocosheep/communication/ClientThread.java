@@ -6,7 +6,7 @@ import com.sqrch.chocosheep.rootobject.RootObject;
 import com.sqrch.chocosheep.state.Setting;
 import com.sqrch.chocosheep.util.LanguageManager;
 
-class ClientThread extends Thread {
+public class ClientThread extends Thread {
     private Root root;
     private Client client;
     private LanguageManager languageManager;
