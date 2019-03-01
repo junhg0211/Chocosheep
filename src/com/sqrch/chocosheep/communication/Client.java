@@ -47,7 +47,7 @@ public class Client {
         printStream = new PrintStream(socket.getOutputStream());
         scanner = new Scanner(socket.getInputStream());
 
-        clientThread = new ClientThread(root, this);
+        clientThread = new ClientThread(root, this, root.getLanguageManager());
 
         start();
     }
@@ -69,7 +69,7 @@ public class Client {
 
         login = false;
         clientThread.resetLoginId();
-        RootObject.add(new AlertMessage("F8R3D6D2T E85D4TTT3QS9E6!", root.getDisplay()));
+        RootObject.add(new AlertMessage(root.getLanguageManager().getString("SuccessfulLogout"), root.getDisplay()));
     }
 
     public void register(String id, String password) {
@@ -113,7 +113,7 @@ public class Client {
         return connected;
     }
 
-    public boolean getLogin() {
+    public boolean isLogin() {
         return login;
     }
 

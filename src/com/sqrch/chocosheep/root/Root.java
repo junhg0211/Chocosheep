@@ -5,19 +5,18 @@ import com.sqrch.chocosheep.communication.Client;
 import com.sqrch.chocosheep.input.KeyManager;
 import com.sqrch.chocosheep.input.MouseManager;
 import com.sqrch.chocosheep.TextFormat;
-import com.sqrch.chocosheep.rootobject.Card;
-import com.sqrch.chocosheep.rootobject.ChattingOverlay;
-import com.sqrch.chocosheep.rootobject.HUD;
-import com.sqrch.chocosheep.rootobject.RootObject;
+import com.sqrch.chocosheep.rootobject.*;
 import com.sqrch.chocosheep.rootobject.TextField;
 import com.sqrch.chocosheep.state.Lobby;
 import com.sqrch.chocosheep.state.State;
+import com.sqrch.chocosheep.util.LanguageManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferStrategy;
 
 public class Root implements Runnable {
+    private LanguageManager languageManager;
     private MouseManager mouseManager;
     private KeyManager keyManager;
     private Display display;
@@ -33,9 +32,12 @@ public class Root implements Runnable {
     }
 
     private void init() {
+        languageManager = new LanguageManager(LanguageManager.Language.KOREAN);
+
         mouseManager = new MouseManager();
         keyManager = new KeyManager();
-        display = new Display(1920, 1080, "Chocosheep", 60, mouseManager, keyManager, this);
+        display = new Display(1920, 1080, languageManager.getString("Chocosheep"),60,
+                mouseManager, keyManager, this);
 
         state = new Lobby(this, mouseManager, keyManager, display);
         hud = new HUD(this, new TextFormat(Const.FONT_PATH, 12, Const.BLACK), keyManager);
@@ -67,8 +69,13 @@ public class Root implements Runnable {
 
         if (keyManager.getStartKeys()[KeyEvent.VK_M]) {
             if (RootObject.getObjectByClassType(ChattingOverlay.class) == null) {
-                if (TextField.getFocused() == null)
-                    RootObject.add(new ChattingOverlay(display, mouseManager, keyManager));
+                if (TextField.getFocused() == null) {
+                    if (client.isLogin()) {
+                        RootObject.add(new ChattingOverlay(display, mouseManager, keyManager));
+                    } else {
+                        RootObject.add(new AlertMessage(languageManager.getString("MessageNeedsLogin"), display));
+                    }
+                }
             }
         }
 
@@ -176,5 +183,9 @@ public class Root implements Runnable {
 
     public KeyManager getKeyManager() {
         return keyManager;
+    }
+
+    public LanguageManager getLanguageManager() {
+        return languageManager;
     }
 }

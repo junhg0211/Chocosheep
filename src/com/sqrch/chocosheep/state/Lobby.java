@@ -42,7 +42,7 @@ public class Lobby extends State {
                 root.setState(new MultiPlay(root, keyManager, root.getDisplay()));
             } catch (Exception ignored) {}
         } else if (toSetting.isClicked()) {
-            root.setState(new Setting(root, mouseManager, keyManager));
+            root.setState(new Setting(root, mouseManager, keyManager, root.getLanguageManager()));
         } else if (exit.isClicked()) {
             System.exit(0);
         }

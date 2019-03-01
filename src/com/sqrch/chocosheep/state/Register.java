@@ -10,6 +10,7 @@ import com.sqrch.chocosheep.root.Display;
 import com.sqrch.chocosheep.root.Root;
 import com.sqrch.chocosheep.rootobject.*;
 import com.sqrch.chocosheep.rootobject.TextField;
+import com.sqrch.chocosheep.util.LanguageManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -21,17 +22,19 @@ class Register extends State {
     private Client client;
     private KeyManager keyManager;
     private MouseManager mouseManager;
+    private LanguageManager languageManager;
 
     private Text register;
     private TextField id, password;
     private Clickarea apply;
 
-    Register(Root root, Display display, Client client, KeyManager keyManager, MouseManager mouseManager) {
+    Register(Root root, Display display, Client client, KeyManager keyManager, MouseManager mouseManager, LanguageManager languageManager) {
         this.root = root;
         this.display = display;
         this.client = client;
         this.keyManager = keyManager;
         this.mouseManager = mouseManager;
+        this.languageManager = languageManager;
 
         init();
     }
@@ -40,7 +43,9 @@ class Register extends State {
         TextFormat textFormat = new TextFormat(Const.FONT_PATH, 64, Const.WHITE);
         TextFormat registerTextFormat = new TextFormat(Const.FONT_PATH, 64, Const.BLACK);
 
-        register = new Text(Positioning.center(display.getWidth(), display.getWidth() / 2), (int) (Positioning.center(display.getHeight(), textFormat.getSize() * 2 + 20) - 20), "G85D21SR6D9Q", registerTextFormat);
+        register = new Text(Positioning.center(display.getWidth(), display.getWidth() / 2),
+                (int) (Positioning.center(display.getHeight(), textFormat.getSize() * 2 + 20) - 20),
+                languageManager.getString("Register"), registerTextFormat);
         id = new TextField(register.getX(), (int) Positioning.center(display.getHeight(), textFormat.getSize() * 2 + 20), display.getWidth() / 2, textFormat, Const.BLACK, mouseManager, keyManager);
         password = new TextField(id.getX(), (int) (id.getY() + textFormat.getSize() + 20), id.getWidth(), textFormat, Const.BLACK, mouseManager, keyManager);
         password.setType(TextField.Type.PASSWORD);
@@ -51,7 +56,7 @@ class Register extends State {
     @Override
     public void tick() {
         if (keyManager.getStartKeys()[KeyEvent.VK_ESCAPE]) {
-            root.setState(new Setting(root, mouseManager, keyManager));
+            root.setState(new Setting(root, mouseManager, keyManager, root.getLanguageManager()));
         }
 
         id.tick();

@@ -4,6 +4,7 @@ import com.sqrch.chocosheep.Const;
 import com.sqrch.chocosheep.TextFormat;
 import com.sqrch.chocosheep.input.KeyManager;
 import com.sqrch.chocosheep.root.Display;
+import com.sqrch.chocosheep.util.LanguageManager;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 public class SettingWindow extends RootObject {
     private Display display;
     private KeyManager keyManager;
+    private LanguageManager languageManager;
 
     private int rounds, tradeLimit;
     private boolean orderNeedToBeSorted;
@@ -20,9 +22,10 @@ public class SettingWindow extends RootObject {
     private ArrayList<Text> texts;
     private Text roundsText, sortedOrderText, tradeLimitText;
 
-    public SettingWindow(Display display, KeyManager keyManager) {
+    public SettingWindow(Display display, KeyManager keyManager, LanguageManager languageManager) {
         this.display = display;
         this.keyManager = keyManager;
+        this.languageManager = languageManager;
 
         init();
     }
@@ -37,12 +40,14 @@ public class SettingWindow extends RootObject {
 
         texts = new ArrayList<>();
 
-        texts.add(new Text(100, (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "F6D2SE3 T2",
-                indexNameTextFormat));
+        texts.add(new Text(100, (int) (display.getHeight() - 70 - valueTextFormat.getSize()),
+                languageManager.getString("RoundCount"), indexNameTextFormat));
         texts.add(new Text(200 + texts.get(0).getWidth(),
-                (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "Z6E3 T2ST4 R44DC6F", indexNameTextFormat));
+                (int) (display.getHeight() - 70 - valueTextFormat.getSize()),
+                languageManager.getString("CardNeedsToBeSorted"), indexNameTextFormat));
         texts.add(new Text(300 + texts.get(0).getWidth() + texts.get(1).getWidth(),
-                (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "R4F63 W41G6S", indexNameTextFormat));
+                (int) (display.getHeight() - 70 - valueTextFormat.getSize()),
+                languageManager.getString("TradeLimit"), indexNameTextFormat));
 
         roundsText = new Text(100, display.getHeight() - 100, "" + rounds, valueTextFormat);
         sortedOrderText = new Text(200 + texts.get(0).getWidth(), display.getHeight() - 100, "O",
@@ -120,7 +125,7 @@ public class SettingWindow extends RootObject {
             tradeLimitText.setText("20");
         } else if (startKeys[KeyEvent.VK_CLOSE_BRACKET]) {
             tradeLimit = Integer.MAX_VALUE;
-            tradeLimitText.setText("D4QTD3A");
+            tradeLimitText.setText(languageManager.getString("None"));
         }
     }
 
@@ -140,12 +145,14 @@ public class SettingWindow extends RootObject {
     public void windowResize() {
         texts = new ArrayList<>();
 
-        texts.add(new Text(100, (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "라운드 수",
-                indexNameTextFormat));
+        texts.add(new Text(100, (int) (display.getHeight() - 70 - valueTextFormat.getSize()),
+                languageManager.getString("RoundCount"), indexNameTextFormat));
         texts.add(new Text(200 + texts.get(0).getWidth(),
-                (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "카드 순서 경찰", indexNameTextFormat));
+                (int) (display.getHeight() - 70 - valueTextFormat.getSize()),
+                languageManager.getString("CardNeedsToBeSorted"), indexNameTextFormat));
         texts.add(new Text(300 + texts.get(0).getWidth() + texts.get(1).getWidth(),
-                (int) (display.getHeight() - 70 - valueTextFormat.getSize()), "거래 제한", indexNameTextFormat));
+                (int) (display.getHeight() - 70 - valueTextFormat.getSize()),
+                languageManager.getString("TradeLimit"), indexNameTextFormat));
 
         roundsText = new Text(100, display.getHeight() - 100, "" + rounds, valueTextFormat);
         sortedOrderText = new Text(200 + texts.get(0).getWidth(), display.getHeight() - 100, "O",

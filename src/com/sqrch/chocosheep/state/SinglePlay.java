@@ -62,7 +62,7 @@ public class SinglePlay extends State {
 
         situation = Situation.SETTING;
 
-        settingWindow = new SettingWindow(display, keyManager);
+        settingWindow = new SettingWindow(display, keyManager, root.getLanguageManager());
 
         having = new ArrayList<>();
         sets = new ArrayList<>();
@@ -203,7 +203,7 @@ public class SinglePlay extends State {
                         resetGame();
                     } else {
                         situation = Situation.RESULT;
-                        resultText.setText(String.format("A8D3S E8S : %d", totalMoney));
+                        resultText.setText(String.format("%s : %d", root.getLanguageManager().getString("GatheredMoney"), totalMoney));
                         resultText.setX(Positioning.center(display.getWidth(), resultText.getWidth()));
                         resultText.setY(Positioning.center(display.getHeight(), resultText.getHeight()));
                     }
