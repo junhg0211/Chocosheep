@@ -65,7 +65,9 @@ public class ClientThread extends Thread {
                 } else if (messages[1].equalsIgnoreCase("TMOT")) {
                     RootObject.add(new AlertMessage(languageManager.getString("TimeOut"), root.getDisplay()));
                 }
-            } else if (messages[0].equals("EXIT")) {
+            } else if (messages[0].equalsIgnoreCase("LGOT")) {
+                break;
+            } else if (messages[0].equalsIgnoreCase("EXIT")) {
                 break;
             }
         }

@@ -4,33 +4,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Account {
+    public static Account newLogin(String id, String password) throws IOException {
+        Account account = new Account(id);
+        account.login(id, password);
+        return account;
+    }
+
     private String id, password;
     private ArrayList<String> friends;
-    private String name;
     private AccountFile accountFile;
 
-    public Account(String id, String password) throws IOException {
+    private Account(String id) {
         this.id = id;
-        this.password = password;
 
         init();
     }
 
-    private void init() throws IOException {
-        friends = new ArrayList<>();
-        accountFile = new AccountFile(id, password);
+    private void login(String id, String password) throws IOException {
+        accountFile = AccountFile.login(id, password);
     }
 
-    public String getId() {
-        return id;
+    private void init() {
+        friends = new ArrayList<>();
+        accountFile = new AccountFile(id);
     }
 
     public ArrayList<String> getFriends() {
         return friends;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public AccountFile getAccountFile() {

@@ -13,7 +13,7 @@ public class Start {
 
     ServerClient getThreadById(String id) {
         for (ServerClient serverClient : serverClients) {
-            if (serverClient.getAccount().getId().equalsIgnoreCase(id)) {
+            if (serverClient.getAccount().getAccountFile().getId().equalsIgnoreCase(id)) {
                 return serverClient;
             }
         }

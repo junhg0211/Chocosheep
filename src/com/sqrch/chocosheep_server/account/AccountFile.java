@@ -14,65 +14,104 @@ public class AccountFile {
         File file = new File(path);
 
         if (!file.exists()) {
-            try {
-                save(file, password, friends, "");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            save(file, password, friends, "");
         } else {
             throw new FileAlreadyExistsException(path);
         }
+    }
+
+    static AccountFile login(String id, String password) throws IOException {
+        AccountFile accountFile = new AccountFile(id);
+        accountFile.login(password);
+        return accountFile;
     }
 
     private String id, password;
     private ArrayList<String> friends;
     private String name;
 
-    private String path;
     private File file;
 
-    AccountFile(String id, String password) throws IOException {
+    public AccountFile(String id) {
         this.id = id;
-        this.password = password;
 
         init();
     }
 
-    private void init() throws IOException {
-        path = "./db/account/" + id + "." + EXTENSION;
-        file = new File(path);
+    private void init() {
+        file = new File("./db/account/" + id + "." + EXTENSION);
+
+        load();
+    }
+
+    private void login(String password) throws IOException {
+        this.password = password;
+
+        @SuppressWarnings("TooBroadScope")
+        String insertedPassword = password;
 
         if (file.exists()) {
             String[] data = load();
-            if (!data[0].equals(password))
+            if (!data[0].equals(insertedPassword))
                 throw new IOException();
         } else {
             throw new IOException();
         }
     }
 
-    private void save() throws IOException {
+    private void save() {
         save(file, password, friends, name);
     }
 
-    private static void save(File file, String password, ArrayList<String> friends, String name) throws IOException {
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(password + "\n");
-        fileWriter.write(String.join(" ", friends) + "\n");
-        fileWriter.write(name + "\n");
-        fileWriter.close();
+    private static void save(File file, String password, ArrayList<String> friends, String name) {
+        FileWriter fileWriter;
+        try {
+            fileWriter = new FileWriter(file);
+            fileWriter.write(password + "\n");
+            fileWriter.write(String.join(" ", friends) + "\n");
+            fileWriter.write(name + "\n");
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private String[] load() throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+    private String[] load() {
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(file));
+        } catch (FileNotFoundException e) {
+            return null;
+        }
         String[] result = new String[3];
         String line;
-        for (int i = 0; (line = bufferedReader.readLine()) != null; i++) {
-            result[i] = line;
+        try {
+            for (int i = 0; (line = bufferedReader.readLine()) != null; i++) {
+                result[i] = line;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         password = result[0];
         friends = new ArrayList<>(Arrays.asList(result[1].split(" ")));
         name = result[2];
         return result;
+    }
+
+    public void resetName() {
+        setName("");
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        save();
+    }
+
+    public String getId() {
+        return id;
     }
 }
