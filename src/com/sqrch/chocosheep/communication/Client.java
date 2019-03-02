@@ -100,7 +100,7 @@ public class Client {
         send("NAME");
     }
 
-    void send(String message) {
+    public void send(String message) {
         lastMessage = message;
         lastMessageSend = true;
         System.out.println("SERVER <- " + message);

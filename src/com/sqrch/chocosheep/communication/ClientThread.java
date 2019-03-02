@@ -2,6 +2,7 @@ package com.sqrch.chocosheep.communication;
 
 import com.sqrch.chocosheep.root.Root;
 import com.sqrch.chocosheep.rootobject.AlertMessage;
+import com.sqrch.chocosheep.rootobject.ChattingOverlay;
 import com.sqrch.chocosheep.rootobject.RootObject;
 import com.sqrch.chocosheep.state.Setting;
 import com.sqrch.chocosheep.util.LanguageManager;
@@ -75,6 +76,12 @@ public class ClientThread extends Thread {
             } else if (messages[0].equalsIgnoreCase("NAME")) {
                 if (!messages[1].equalsIgnoreCase("ERRR")) {
                     nickname = String.join(" ", Arrays.copyOfRange(messages, 1, messages.length));
+                }
+            } else if (messages[0].equalsIgnoreCase("GUSR")) {
+                if (messages[1].equalsIgnoreCase("ERRR")) {
+                    ChattingOverlay.setUsers(null);
+                } else {
+                    ChattingOverlay.setUsers(Arrays.copyOfRange(messages, 1, messages.length));
                 }
             }
         }

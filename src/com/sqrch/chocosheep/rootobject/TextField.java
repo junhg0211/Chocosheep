@@ -75,6 +75,9 @@ public class TextField extends RootObject {
                     inserting = false;
                 } else {
                     text += keyManager.getContents();
+                    if (!keyManager.getContents().equals("")) {
+                        withInserting();
+                    }
                     keyManager.resetContents();
 
                     if (text.length() >= 1) {
@@ -100,6 +103,8 @@ public class TextField extends RootObject {
         if (inserting)
             focused = this;
     }
+
+    public void withInserting() {}
 
     @Override
     public void render(Graphics graphics) {
@@ -153,5 +158,7 @@ public class TextField extends RootObject {
         return inserting;
     }
 
-
+    static void setFocused(TextField focused) {
+        TextField.focused = focused;
+    }
 }
