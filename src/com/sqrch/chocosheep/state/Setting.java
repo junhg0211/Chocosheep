@@ -71,8 +71,10 @@ public class Setting extends State {
         } else {
             if (root.getClient().getId() == null) {
                 root.getClient().refreshId();
+                root.getClient().refreshNickname();
             }
-            nowLogin.setText(root.getClient().getId() + languageManager.getString("LoginAt"));
+            nowLogin.setText(String.format("%s(%s)%s", root.getClient().getNickname(), root.getClient().getId(), languageManager.getString("LoginAt")));
+//            nowLogin.setText(root.getClient().getId() + languageManager.getString("LoginAt"));
             if (logInOutButton.isClicked()) {
                 id.resetText();
                 password.resetText();

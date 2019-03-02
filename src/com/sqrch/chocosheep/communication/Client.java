@@ -90,7 +90,17 @@ public class Client {
         send("LGIN");
     }
 
-    public void send(String message) {
+    public String getNickname() {
+        if (clientThread == null)
+            return null;
+        return clientThread.getNickname();
+    }
+
+    public void refreshNickname() {
+        send("NAME");
+    }
+
+    void send(String message) {
         lastMessage = message;
         lastMessageSend = true;
         System.out.println("SERVER <- " + message);
