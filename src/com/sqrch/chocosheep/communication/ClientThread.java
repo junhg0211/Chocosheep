@@ -102,11 +102,7 @@ public class ClientThread extends Thread {
         this.loginId = null;
     }
 
-    public String getNickname() {
+    String getNickname() {
         return nickname;
-    }
-
-    void resetNickname() {
-        nickname = null;
     }
 }

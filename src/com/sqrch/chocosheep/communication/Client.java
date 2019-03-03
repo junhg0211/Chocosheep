@@ -103,7 +103,7 @@ public class Client {
     public void send(String message) {
         lastMessage = message;
         lastMessageSend = true;
-        System.out.println("SERVER <- " + message);
+//        System.out.println("SERVER <- " + message);
         printStream.println(message);
     }
 
@@ -115,7 +115,7 @@ public class Client {
             disconnect();
             return null;
         }
-        System.out.println("SERVER -> " + lastMessage);
+//        System.out.println("SERVER -> " + lastMessage);
         return lastMessage;
     }
 

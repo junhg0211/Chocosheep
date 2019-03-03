@@ -60,4 +60,8 @@ public class Clickarea extends RootObject {
     public void setY(int y) {
         this.y = y;
     }
+
+    public MouseManager getMouseManager() {
+        return mouseManager;
+    }
 }

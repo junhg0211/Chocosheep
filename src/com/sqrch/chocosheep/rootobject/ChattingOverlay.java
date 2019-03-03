@@ -13,8 +13,10 @@ import java.util.Arrays;
 
 public class ChattingOverlay extends RootObject {
     private static final int WIDTH = 500;
+    private static final int USERS_HEIGHT = 100;
 
-    private static String[] users;
+    private static String[] users = new String[0];
+    private static boolean usersChanged = false;
 
     private Display display;
     private Client client;
@@ -24,6 +26,7 @@ public class ChattingOverlay extends RootObject {
     private Rectangle background, onlinePlayerBackground;
     private TextField userSearch;
     private String[] onlineUser;
+    private Clickarea[] usersClickarea;
 
     public ChattingOverlay(Display display, Client client, MouseManager mouseManager, KeyManager keyManager) {
         this.display = display;
@@ -46,6 +49,8 @@ public class ChattingOverlay extends RootObject {
                 }
             }
         };
+
+        usersClickarea = new Clickarea[0];
     }
 
     @Override
@@ -53,9 +58,9 @@ public class ChattingOverlay extends RootObject {
         userSearch.tick();
 
         if (mouseManager.getLeftEndClick()) {
-            mouseManager.resetLeftEndClick();
             if ((mouseManager.getX() < background.getX() && WIDTH < mouseManager.getX())
                     || keyManager.getStartKeys()[KeyEvent.VK_ESCAPE]) {
+                mouseManager.resetLeftEndClick();
                 destroy();
             }
         }
@@ -64,16 +69,45 @@ public class ChattingOverlay extends RootObject {
             keyManager.resetStartKey(KeyEvent.VK_ESCAPE);
             destroy();
         }
+
+        if (usersChanged) {
+            usersClickarea = new Clickarea[(int) Math.ceil((double) (display.getHeight() - 150) / USERS_HEIGHT)];
+
+            if (users != null) {
+                for (int i = 0; i < usersClickarea.length && i < users.length; i++) {
+                    usersClickarea[i] = new Clickarea(50, 150 + i * USERS_HEIGHT, WIDTH - 100, USERS_HEIGHT, mouseManager) {
+                        @Override
+                        public boolean isClicked() {
+                            return super.isClicked();
+                        }
+                    };
+                }
+            } else {
+                usersClickarea = null;
+            }
+
+            usersChanged = false;
+        }
+
+        try {
+            //noinspection ConstantConditions
+            for (int i = 0; i < usersClickarea.length; i++) {
+                if (usersClickarea[i] == null) continue;
+
+                if (usersClickarea[i].isClicked()) {
+                    System.out.println(users[i]);
+                }
+            }
+        } catch (NullPointerException ignored) {}
     }
 
     @Override
     public void render(Graphics graphics) {
         onlinePlayerBackground.render(graphics);
         userSearch.render(graphics);
-        TextFormat textFormat = new TextFormat(Const.FONT_PATH, 16, Const.WHITE);
         try {
-            for (int i = 0; i < users.length; i++) {
-                new Text(50, (int) (100 + i * textFormat.getSize()), users[i], textFormat).render(graphics);
+            for (Clickarea clickarea : usersClickarea) {
+                clickarea.render(graphics);
             }
         } catch (NullPointerException ignored) {}
 
@@ -90,5 +124,6 @@ public class ChattingOverlay extends RootObject {
 
     public static void setUsers(String[] users) {
         ChattingOverlay.users = users;
+        ChattingOverlay.usersChanged = true;
     }
 }

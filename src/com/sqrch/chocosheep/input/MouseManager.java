@@ -22,7 +22,7 @@ public class MouseManager implements MouseInputListener {
     }
 
     public void tick() {
-        for (int i = 0; i < click.length; i++) {
+        for (int i = 0; i < KEY_COUNT; i++) {
             startClick[i] = !previousClick[i] && click[i];
             endClick[i] = previousClick[i] && !click[i];
         }
@@ -77,9 +77,7 @@ public class MouseManager implements MouseInputListener {
     }
 
     public boolean getStartClick(int index) {
-        boolean result = startClick[index];
-        startClick[index] = false;
-        return result;
+        return startClick[index];
     }
 
     public boolean getLeftEndClick() {
@@ -98,4 +96,7 @@ public class MouseManager implements MouseInputListener {
         return clickStartY;
     }
 
+    public boolean[] getClick() {
+        return click;
+    }
 }
